@@ -21,233 +21,99 @@ const NAV = ["About", "Publications", "Activities", "Research"];
 /* ─── Loader ─────────────────────────────────────────────────── */
 function PageLoader({ done }) {
   const canvasRef = useRef(null);
-  const [pct, setPct] = useState(0);
 
-  /* animate loader bar */
-  useEffect(() => {
-    let v = 0;
-    const id = setInterval(() => {
-      v += Math.random() * 4 + 1;
-      if (v >= 100) { v = 100; clearInterval(id); }
-      setPct(Math.round(v));
-    }, 40);
-    return () => clearInterval(id);
-  }, []);
-
-  /* animated circuit on canvas */
   useEffect(() => {
     const cvs = canvasRef.current;
     if (!cvs) return;
     const ctx = cvs.getContext("2d");
-    const W = cvs.width = 260;
-    const H = cvs.height = 110;
+    const W = cvs.width  = 320;
+    const H = cvs.height = 200;
 
-    /* circuit node graph */
     const nodes = [
-      { x: 20,  y: 55 },
-      { x: 60,  y: 55 },
-      { x: 60,  y: 25 },
-      { x: 110, y: 25 },
-      { x: 110, y: 55 },
-      { x: 155, y: 55 },
-      { x: 155, y: 80 },
-      { x: 200, y: 80 },
-      { x: 200, y: 55 },
-      { x: 240, y: 55 },
+      { x: 50,  y: 100 },
+      { x: 130, y: 50  },
+      { x: 130, y: 150 },
+      { x: 210, y: 50  },
+      { x: 210, y: 150 },
+      { x: 270, y: 100 },
     ];
+
     const edges = [
-      [0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,7],[7,8],[8,9]
+      [0, 1], [0, 2],
+      [1, 3], [1, 4],
+      [2, 3], [2, 4],
+      [3, 5], [4, 5],
     ];
 
-    /* components */
-    const comps = [
-      { type: "resistor", cx: 40, cy: 55 },
-      { type: "capacitor", cx: 130, cy: 55 },
-      { type: "led", cx: 178, cy: 80 },
-    ];
+    const NODE_DELAY  = 18;
+    const EDGE_DELAY  = 14;
+    const PAUSE       = 60;
+    const totalFrames = nodes.length * NODE_DELAY + edges.length * EDGE_DELAY + PAUSE;
 
-    let t = 0;
+    let frame = 0;
+    let raf;
+
     const draw = () => {
       ctx.clearRect(0, 0, W, H);
+      const t = frame % totalFrames;
+      const visibleNodes = Math.min(nodes.length, Math.floor(t / NODE_DELAY));
+      const edgeStart    = nodes.length * NODE_DELAY;
+      const visibleEdges = t < edgeStart ? 0 : Math.min(edges.length, Math.floor((t - edgeStart) / EDGE_DELAY));
 
-      /* background grid */
-      ctx.strokeStyle = "rgba(13,124,102,0.08)";
-      ctx.lineWidth = 0.5;
-      for (let x = 0; x <= W; x += 15) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke(); }
-      for (let y = 0; y <= H; y += 15) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
-
-      /* wires */
-      ctx.strokeStyle = "#0d3a26";
-      ctx.lineWidth = 1.5;
-      edges.forEach(([a, b]) => {
-        ctx.beginPath(); ctx.moveTo(nodes[a].x, nodes[a].y); ctx.lineTo(nodes[b].x, nodes[b].y); ctx.stroke();
-      });
-
-      /* travelling signal dot */
-      const totalLen = edges.length;
-      const phase = (t * 0.04) % totalLen;
-      const ei = Math.floor(phase);
-      const frac = phase - ei;
-      if (ei < edges.length) {
-        const [a, b] = edges[ei];
-        const sx = nodes[a].x + (nodes[b].x - nodes[a].x) * frac;
-        const sy = nodes[a].y + (nodes[b].y - nodes[a].y) * frac;
-        const grad = ctx.createRadialGradient(sx, sy, 0, sx, sy, 8);
-        grad.addColorStop(0, "#1db87e"); grad.addColorStop(1, "transparent");
-        ctx.fillStyle = grad; ctx.beginPath(); ctx.arc(sx, sy, 8, 0, Math.PI*2); ctx.fill();
-        ctx.fillStyle = "#fff"; ctx.beginPath(); ctx.arc(sx, sy, 2.5, 0, Math.PI*2); ctx.fill();
+      for (let i = 0; i < visibleEdges; i++) {
+        const [a, b] = edges[i];
+        const na = nodes[a], nb = nodes[b];
+        const isDrawing = i === visibleEdges - 1 && t < edgeStart + visibleEdges * EDGE_DELAY;
+        let frac = 1;
+        if (isDrawing) frac = ((t - edgeStart) % EDGE_DELAY) / EDGE_DELAY;
+        const ex = na.x + (nb.x - na.x) * frac;
+        const ey = na.y + (nb.y - na.y) * frac;
+        ctx.strokeStyle = "rgba(255,255,255,0.2)";
+        ctx.lineWidth   = 1;
+        ctx.beginPath(); ctx.moveTo(na.x, na.y); ctx.lineTo(ex, ey); ctx.stroke();
       }
 
-      /* component symbols */
-      comps.forEach(({ type, cx, cy }) => {
-        ctx.save();
-        if (type === "resistor") {
-          ctx.fillStyle = "#0d3a26"; ctx.strokeStyle = "#1db87e"; ctx.lineWidth = 1;
-          ctx.beginPath(); ctx.roundRect(cx-14, cy-7, 28, 14, 2); ctx.fill(); ctx.stroke();
-          ctx.fillStyle = "#1db87e"; ctx.font = "bold 7px 'Courier New'"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
-          ctx.fillText("Ω", cx, cy);
-        } else if (type === "capacitor") {
-          ctx.strokeStyle = "#1db87e"; ctx.lineWidth = 1.5;
-          ctx.beginPath(); ctx.moveTo(cx-5, cy-10); ctx.lineTo(cx-5, cy+10); ctx.stroke();
-          ctx.beginPath(); ctx.moveTo(cx+5, cy-10); ctx.lineTo(cx+5, cy+10); ctx.stroke();
-        } else if (type === "led") {
-          const glow = Math.sin(t * 0.08) * 0.3 + 0.7;
-          ctx.fillStyle = `rgba(29,184,126,${glow * 0.25})`; ctx.beginPath(); ctx.arc(cx, cy, 9, 0, Math.PI*2); ctx.fill();
-          ctx.strokeStyle = "#1db87e"; ctx.lineWidth = 1.5;
-          ctx.beginPath(); ctx.arc(cx, cy, 5, 0, Math.PI*2); ctx.stroke();
-          ctx.fillStyle = `rgba(29,184,126,${glow})`; ctx.beginPath(); ctx.arc(cx, cy, 3, 0, Math.PI*2); ctx.fill();
-        }
-        ctx.restore();
-      });
-
-      /* oscilloscope wave at bottom */
-      ctx.strokeStyle = `rgba(29,184,126,0.6)`; ctx.lineWidth = 1.2;
-      ctx.beginPath();
-      for (let x = 0; x <= W; x += 2) {
-        const y = H - 12 + Math.sin((x + t*1.5) * 0.08) * 4 + Math.sin((x + t) * 0.15) * 2;
-        x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+      for (let i = 0; i < visibleNodes; i++) {
+        const n     = nodes[i];
+        const age   = t - i * NODE_DELAY;
+        const scale = Math.min(1, age / 10);
+        const r     = 7 * scale;
+        const pulse = i < visibleNodes - 1 ? 1 + Math.sin(frame * 0.05 + i * 1.2) * 0.08 : 1;
+        ctx.strokeStyle = "rgba(255,255,255,0.12)";
+        ctx.lineWidth   = 1;
+        ctx.beginPath(); ctx.arc(n.x, n.y, r * 2.2 * pulse, 0, Math.PI * 2); ctx.stroke();
+        ctx.fillStyle = i === 0 || i === nodes.length - 1 ? "rgba(255,255,255,0.75)" : "rgba(255,255,255,0.45)";
+        ctx.beginPath(); ctx.arc(n.x, n.y, r, 0, Math.PI * 2); ctx.fill();
       }
-      ctx.stroke();
 
-      t++;
+      frame++;
+      raf = requestAnimationFrame(draw);
     };
 
-    const raf = { id: null };
-    const loop = () => { draw(); raf.id = requestAnimationFrame(loop); };
-    loop();
-    return () => cancelAnimationFrame(raf.id);
+    draw();
+    return () => cancelAnimationFrame(raf);
   }, []);
 
   return (
     <div style={{
-      position: "fixed", inset: 0, background: C.deep, zIndex: 9999,
+      position: "fixed", inset: 0,
+      background: "#07120d",
+      zIndex: 9999,
       display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
       gap: 24,
       opacity: done ? 0 : 1,
       pointerEvents: done ? "none" : "all",
-      transition: "opacity 0.7s ease",
+      transition: "opacity 0.9s ease",
     }}>
-      <canvas ref={canvasRef} style={{ imageRendering: "crisp-edges" }} />
-      <div style={{ fontFamily: "'Courier New', monospace", color: C.mint, fontSize: 11, letterSpacing: "0.2em" }}>
-        INITIALIZING · EE · IIT BOMBAY
+      <div style={{ fontFamily: "Georgia, serif", fontSize: 26, color: "rgba(255,255,255,0.85)", letterSpacing: "0.04em", fontWeight: "normal" }}>
+        D. Manjunath
       </div>
-      <div style={{ width: 260, height: 2, background: "#0d3a26", borderRadius: 2, overflow: "hidden" }}>
-        <div style={{ height: "100%", width: `${pct}%`, background: C.mint, borderRadius: 2, transition: "width 0.05s linear" }} />
-      </div>
-      <div style={{ fontFamily: "'Courier New', monospace", color: "#0d5c3e", fontSize: 10, letterSpacing: "0.1em" }}>
-        {pct}%
+      <canvas ref={canvasRef} />
+      <div style={{ fontFamily: "'Courier New', monospace", fontSize: 10, color: "rgba(255,255,255,0.2)", letterSpacing: "0.18em", textTransform: "uppercase" }}>
+        Department of Electrical Engineering · IIT Bombay
       </div>
     </div>
   );
-}
-
-/* ─── Hero canvas art ────────────────────────────────────────── */
-function HeroCanvas() {
-  const ref = useRef(null);
-  useEffect(() => {
-    const cvs = ref.current;
-    if (!cvs) return;
-    const ctx = cvs.getContext("2d");
-    let t = 0, raf;
-
-    const resize = () => {
-      cvs.width = cvs.offsetWidth;
-      cvs.height = cvs.offsetHeight;
-    };
-    resize();
-    window.addEventListener("resize", resize);
-
-    const draw = () => {
-      const W = cvs.width, H = cvs.height;
-      ctx.clearRect(0, 0, W, H);
-
-      /* dot grid */
-      ctx.fillStyle = "rgba(13,124,102,0.18)";
-      for (let x = 0; x < W; x += 28) {
-        for (let y = 0; y < H; y += 28) {
-          const pulse = Math.sin(t * 0.02 + x * 0.03 + y * 0.04) * 0.5 + 0.5;
-          ctx.globalAlpha = pulse * 0.25;
-          ctx.beginPath(); ctx.arc(x, y, 1.2, 0, Math.PI*2); ctx.fill();
-        }
-      }
-      ctx.globalAlpha = 1;
-
-      /* sine wave lines */
-      [0, 1, 2].forEach(i => {
-        const amp = 18 + i * 8;
-        const freq = 0.018 - i * 0.003;
-        const yBase = H * 0.35 + i * 30;
-        const alpha = 0.12 - i * 0.03;
-        ctx.strokeStyle = `rgba(29,184,126,${alpha})`;
-        ctx.lineWidth = 1;
-        ctx.beginPath();
-        for (let x = 0; x <= W; x += 2) {
-          const y = yBase + Math.sin((x * freq) + t * 0.04 + i) * amp;
-          x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-        }
-        ctx.stroke();
-      });
-
-      /* circuit traces */
-      const traces = [
-        { x1: W*0.55, y1: 40,    x2: W*0.55, y2: H*0.6 },
-        { x1: W*0.55, y1: H*0.6, x2: W*0.75, y2: H*0.6 },
-        { x1: W*0.75, y1: H*0.6, x2: W*0.75, y2: 40    },
-        { x1: W*0.75, y1: 40,    x2: W*0.9,  y2: 40    },
-        { x1: W*0.9,  y1: 40,    x2: W*0.9,  y2: H*0.4 },
-      ];
-      ctx.strokeStyle = "rgba(13,124,102,0.25)";
-      ctx.lineWidth = 1.5;
-      traces.forEach(({ x1, y1, x2, y2 }) => {
-        ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
-      });
-
-      /* node circles */
-      [[W*0.55,40],[W*0.75,40],[W*0.9,40],[W*0.75,H*0.6]].forEach(([x,y]) => {
-        const pulse = Math.sin(t*0.05 + x*0.01) * 0.4 + 0.6;
-        ctx.strokeStyle = `rgba(29,184,126,${pulse*0.4})`; ctx.lineWidth = 1;
-        ctx.fillStyle = `rgba(29,184,126,${pulse*0.15})`;
-        ctx.beginPath(); ctx.arc(x, y, 4, 0, Math.PI*2); ctx.fill(); ctx.stroke();
-      });
-
-      /* FFT bars on right */
-      const bars = 18;
-      for (let i = 0; i < bars; i++) {
-        const bh = (Math.sin(t*0.07 + i*0.7) * 0.4 + 0.6) * 50 + 8;
-        const bx = W - 30 - (bars - i) * 10;
-        const alpha = 0.15 + (i/bars)*0.1;
-        ctx.fillStyle = `rgba(29,184,126,${alpha})`;
-        ctx.fillRect(bx, H - 10 - bh, 6, bh);
-      }
-
-      t++;
-      raf = requestAnimationFrame(draw);
-    };
-    draw();
-    return () => { cancelAnimationFrame(raf); window.removeEventListener("resize", resize); };
-  }, []);
-
-  return <canvas ref={ref} style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }} />;
 }
 
 /* ─── Helpers ────────────────────────────────────────────────── */
@@ -264,21 +130,24 @@ function SectionHead({ children }) {
 
 function PubItem({ item }) {
   return (
-    <li style={{ padding: "18px 0", borderBottom: `1px solid ${C.pale}`, lineHeight: 1.85 }}>
-      <span style={{ color: C.muted, fontSize: 13.5 }}>{item.authors} </span>
-      <span style={{ fontStyle: "italic", color: C.slate, fontSize: 14 }}>{item.title}</span>
-      <span style={{ color: C.muted, fontSize: 13 }}> {item.venue}</span>
-      {(item.award || item.Award) && (
-        <span style={{ display: "inline-block", marginLeft: 8, background: "#fffbeb", color: "#92610a", border: "1px solid #fcd34d", borderRadius: 4, fontSize: 11, padding: "2px 8px" }}>
-          ★ {item.award || item.Award}
-        </span>
-      )}
-      {item.doi && (
-        <a href={item.doi} target="_blank" rel="noreferrer" style={{ marginLeft: 8, fontSize: 11, textDecoration: "none", color: C.teal, border: `1px solid ${C.teal}`, padding: "2px 8px", borderRadius: 4 }}>
-          DOI ↗
-        </a>
-      )}
-      {item.note && <div style={{ marginTop: 4, fontSize: 12, color: C.muted, fontStyle: "italic" }}>{item.note}</div>}
+    <li style={{ padding: "18px 0", borderBottom: `1px solid ${C.pale}`, lineHeight: 1.85, display: "flex", gap: 12 }}>
+      <span style={{ color: C.teal, fontSize: 16, lineHeight: 1.6, flexShrink: 0 }}>•</span>
+      <div>
+        <span style={{ color: C.muted, fontSize: 13.5 }}>{item.authors} </span>
+        <span style={{ fontStyle: "italic", color: C.slate, fontSize: 14 }}>{item.title}</span>
+        <span style={{ color: C.muted, fontSize: 13 }}> {item.venue}</span>
+        {(item.award || item.Award) && (
+          <span style={{ display: "inline-block", marginLeft: 8, background: "#fffbeb", color: "#92610a", border: "1px solid #fcd34d", borderRadius: 4, fontSize: 11, padding: "2px 8px" }}>
+            ★ {item.award || item.Award}
+          </span>
+        )}
+        {item.doi && (
+          <a href={item.doi} target="_blank" rel="noreferrer" style={{ marginLeft: 8, fontSize: 11, textDecoration: "none", color: C.teal, border: `1px solid ${C.teal}`, padding: "2px 8px", borderRadius: 4 }}>
+            DOI ↗
+          </a>
+        )}
+        {item.note && <div style={{ marginTop: 4, fontSize: 12, color: C.muted, fontStyle: "italic" }}>{item.note}</div>}
+      </div>
     </li>
   );
 }
@@ -321,26 +190,26 @@ export default function App() {
 
   const [journals,    setJournals]    = useState([]);
   const [conferences, setConferences] = useState([]);
-  const [awards,      setAwards]      = useState([]);
-  const [adminRoles,  setAdminRoles]  = useState([]);
+  const [opeds,       setOpeds]       = useState([]);
+  const [books,       setBooks]       = useState([]);
+  const [preprint,    setPreprint]    = useState([]);
   const [talks,       setTalks]       = useState([]);
 
   const w        = useWindowWidth();
   const isMobile = w < 700;
 
-  /* finish loader after ~2.5 s */
   useEffect(() => { const id = setTimeout(() => setLoaderDone(true), 2600); return () => clearTimeout(id); }, []);
 
-  useCSV("https://docs.google.com/spreadsheets/d/1pfZ-iwS1ZddWTejJT2SaDi1mn4Hg7MnTiNPz0rImoo8/export?format=csv&gid=2118216013", setAwards);
-  useCSV("https://docs.google.com/spreadsheets/d/1o48HE2A1RsIYGBSMmwNs5cffDy_jILVLMGyy9uR4keY/export?format=csv&gid=632226715", setAdminRoles);
-  useCSV("https://docs.google.com/spreadsheets/d/1o0FROIzfZ_OmGLAQZgqsvCPE7oUhjQnExBaD-2_npkk/export?format=csv&gid=465249833", setJournals);
-  useCSV("https://docs.google.com/spreadsheets/d/1acmC2Vbh0CnkOJVrHtELYjdQ72VGA3uEKPb5TL7TN9A/export?format=csv&gid=790643081", setConferences);
-  useCSV("https://docs.google.com/spreadsheets/d/1fVCvjTkDWQKnSW4Ir7rWbB9IoLH0EHqR9rtu4_ltH2E/export?format=csv&gid=306938548", setTalks);
+  useCSV("https://docs.google.com/spreadsheets/d/1pfZ-iwS1ZddWTejJT2SaDi1mn4Hg7MnTiNPz0rImoo8/export?format=csv&gid=2118216013", setOpeds);
+  useCSV("https://docs.google.com/spreadsheets/d/1o48HE2A1RsIYGBSMmwNs5cffDy_jILVLMGyy9uR4keY/export?format=csv&gid=632226715", setBooks);
+  useCSV("https://docs.google.com/spreadsheets/d/1o0FROIzfZ_OmGLAQZgqsvCPE7oUhjQnExBaD-2_npkk/export?format=csv&gid=465249833", setPreprint);
+  useCSV("https://docs.google.com/spreadsheets/d/1acmC2Vbh0CnkOJVrHtELYjdQ72VGA3uEKPb5TL7TN9A/export?format=csv&gid=790643081", setJournals);
+  useCSV("https://docs.google.com/spreadsheets/d/1fVCvjTkDWQKnSW4Ir7rWbB9IoLH0EHqR9rtu4_ltH2E/export?format=csv&gid=306938548", setConferences);
+  useCSV("https://docs.google.com/spreadsheets/d/1_zfbe-l28D57WqjQ5cjSh17r5lO2oC62ucKaFzU1VkQ/export?format=csv&gid=1064858605", setTalks);
 
   const go = (page) => { setActive(page); setMenuOpen(false); };
 
-  /* ── shared content styles ── */
-  const contentPad = { maxWidth: 1040, margin: "0 auto", padding: isMobile ? "0 18px 60px" : "0 36px 80px" };
+  const contentPad = { maxWidth: 1040, margin: "0 auto", padding: isMobile ? "0 18px 60px" : "0 36px 80px", paddingTop: 0 };
 
   return (
     <div style={{ fontFamily: "Georgia, serif", background: C.bg, color: C.slate, minHeight: "100vh" }}>
@@ -399,12 +268,8 @@ export default function App() {
       )}
 
       {/* ── HERO ── */}
-      <div style={{ position: "relative", height: isMobile ? 220 : 290, overflow: "hidden", background: C.deep }}>
-        <HeroCanvas />
-
-        {/* left accent line */}
+      <div style={{ position: "relative", height: isMobile ? 220 : 290, overflow: "hidden", background: "linear-gradient(135deg, #04180f 0%, #0a3d2e 100%)" }}>
         <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: 3, background: C.teal, opacity: 0.6 }} />
-
         <div style={{ position: "relative", zIndex: 2, height: "100%", display: "flex", flexDirection: "column", justifyContent: "center", padding: isMobile ? "0 24px" : "0 52px" }}>
           <div style={{ fontFamily: "'Courier New', monospace", fontSize: 10, letterSpacing: "0.2em", color: C.mint, marginBottom: 10, display: "flex", alignItems: "center", gap: 8 }}>
             <span style={{ display: "inline-block", width: 28, height: 1, background: C.mint }} />
@@ -435,16 +300,14 @@ export default function App() {
 
         {/* ── About ── */}
         {active === "About" && (
-          <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "280px 1fr", gap: isMobile ? 28 : 56, alignItems: "start", marginTop: 44 }}>
+          <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "280px 1fr", gap: isMobile ? 28 : 56, alignItems: "start", marginTop: 28 }}>
 
-            {/* portrait */}
             <div style={{ position: "relative" }}>
-              <div style={{ position: "absolute", top: 12, left: 12, right: -12, bottom: -12, border: `1.5px solid ${C.border}`, borderRadius: 16, zIndex: 0 }} />
               <img
-                src="/profile.png"
+                src="/cropped.JPG"
                 alt="D. Manjunath"
                 onError={e => { e.target.style.display = "none"; document.getElementById("prof-fallback").style.display = "flex"; }}
-                style={{ width: "100%", aspectRatio: "3/4", objectFit: "cover", borderRadius: 14, display: "block", position: "relative", zIndex: 1, border: `1px solid ${C.border}` }}
+                style={{ width: "100%", aspectRatio: "3/4", objectFit: "cover", objectPosition: "center 35%", borderRadius: 14, display: "block", position: "relative", zIndex: 1, border: `1px solid ${C.border}` }}
               />
               <div id="prof-fallback" style={{
                 display: "none", width: "100%", aspectRatio: "3/4",
@@ -460,7 +323,6 @@ export default function App() {
               </div>
             </div>
 
-            {/* bio */}
             <div>
               <div style={{ fontSize: isMobile ? 26 : 32, fontWeight: "bold", color: "#0a3d2e", letterSpacing: "-0.01em", marginBottom: 4 }}>D. Manjunath</div>
               <div style={{ fontSize: 11, color: C.teal, letterSpacing: "0.1em", textTransform: "uppercase", fontFamily: "'Courier New', monospace", marginBottom: 20 }}>Professor · IIT Bombay</div>
@@ -474,7 +336,6 @@ export default function App() {
                 <p key={i} style={{ lineHeight: 1.9, color: "#374151", fontSize: isMobile ? 14.5 : 15.5, marginBottom: 16 }}>{p}</p>
               ))}
 
-              {/* info cards */}
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, margin: "22px 0" }}>
                 {[
                   ["Department", "Electrical Engineering"],
@@ -512,6 +373,14 @@ export default function App() {
         {/* ── Publications ── */}
         {active === "Publications" && (
           <>
+            <SectionHead>Pre-print Publications</SectionHead>
+            <ul style={{ listStyle: "none", padding: 0 }}>
+              {preprint.length === 0
+                ? <li style={{ color: C.muted, fontSize: 13, padding: "16px 0" }}>Loading publications…</li>
+                : preprint.map((item, i) => <PubItem key={i} item={item} />)
+              }
+            </ul>
+
             <SectionHead>Journal Articles</SectionHead>
             <ul style={{ listStyle: "none", padding: 0 }}>
               {journals.length === 0
@@ -533,27 +402,27 @@ export default function App() {
         {/* ── Activities ── */}
         {active === "Activities" && (
           <>
-            <SectionHead>Awards &amp; Honours</SectionHead>
+            <SectionHead>Op-eds</SectionHead>
             <ul style={{ listStyle: "none", padding: 0 }}>
-              {awards.length === 0
+              {opeds.length === 0
                 ? <li style={{ color: C.muted, fontSize: 13, padding: "16px 0" }}>Loading…</li>
-                : awards.map((item, i) => (
+                : opeds.map((item, i) => (
                     <TimelineItem key={i} year={item.year || item.period} text={item.text || item.title || item.award} />
                   ))
               }
             </ul>
 
-            <SectionHead>Administrative Roles</SectionHead>
+            <SectionHead>Books</SectionHead>
             <ul style={{ listStyle: "none", padding: 0 }}>
-              {adminRoles.length === 0
+              {books.length === 0
                 ? <li style={{ color: C.muted, fontSize: 13, padding: "16px 0" }}>Loading…</li>
-                : adminRoles.map((item, i) => (
+                : books.map((item, i) => (
                     <TimelineItem key={i} year={item.year || item.period} text={item.text || item.role || item.title} />
                   ))
               }
             </ul>
 
-            <SectionHead>Invited Talks</SectionHead>
+            <SectionHead>Refereed Conferences</SectionHead>
             <ul style={{ listStyle: "none", padding: 0 }}>
               {talks.length === 0
                 ? <li style={{ color: C.muted, fontSize: 13, padding: "16px 0" }}>Loading…</li>
