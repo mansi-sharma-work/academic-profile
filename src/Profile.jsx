@@ -178,7 +178,7 @@ function useCSV(url, setter) {
     Papa.parse(url, {
       download: true, header: true, skipEmptyLines: true,
       complete: (r) => setter(r.data),
-    });
+    });// eslint-disable-next-line react-hooks/exhaustive-deps
   }, [url]);
 }
 
