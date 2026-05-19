@@ -226,16 +226,10 @@ export default function App() {
       <nav style={{
         position: "sticky", top: 0, zIndex: 100,
         background: C.white, borderBottom: `1px solid ${C.border}`,
-        display: "flex", justifyContent: "space-between", alignItems: "center",
+        display: "flex", justifyContent: "center", alignItems: "center",
         padding: "0 28px", minHeight: 58,
         boxShadow: "0 1px 12px rgba(0,0,0,0.06)",
       }}>
-        <button onClick={() => go("About")} style={{
-          background: "none", border: "none", cursor: "pointer",
-          fontSize: 18, fontWeight: "bold", color: C.forest,
-          fontFamily: "Georgia, serif", letterSpacing: "-0.01em",
-        }}>D. Manjunath</button>
-
         {isMobile ? (
           <button onClick={() => setMenuOpen(!menuOpen)} style={{
             border: `1px solid ${C.border}`, background: C.white,
@@ -271,7 +265,7 @@ export default function App() {
       {/* ── HERO ── */}
       <div style={{ position: "relative", height: isMobile ? 220 : 290, overflow: "hidden", background: "linear-gradient(135deg, #04180f 0%, #0a3d2e 100%)" }}>
         <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: 3, background: C.teal, opacity: 0.6 }} />
-        <div style={{ position: "relative", zIndex: 2, height: "100%", display: "flex", flexDirection: "column", justifyContent: "center", padding: isMobile ? "0 24px" : "0 52px" }}>
+        <div style={{ position: "relative", zIndex: 2, height: "100%", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", textAlign: "center", padding: isMobile ? "0 24px" : "0 52px" }}>
           <div style={{ fontFamily: "'Courier New', monospace", fontSize: 10, letterSpacing: "0.2em", color: C.mint, marginBottom: 10, display: "flex", alignItems: "center", gap: 8 }}>
             <span style={{ display: "inline-block", width: 28, height: 1, background: C.mint }} />
             PROFESSOR · DEPT. OF ELECTRICAL ENGINEERING
@@ -325,7 +319,7 @@ export default function App() {
             </div>
 
             <div>
-              <div style={{ fontSize: isMobile ? 26 : 32, fontWeight: "bold", color: "#0a3d2e", letterSpacing: "-0.01em", marginBottom: 4 }}>D. Manjunath</div>
+              <div style={{ fontSize: isMobile ? 26 : 32, fontWeight: "bold", color: "#0a3d2e", letterSpacing: "-0.01em", marginBottom: 4 }}>Bio</div>
               <div style={{ fontSize: 11, color: C.teal, letterSpacing: "0.1em", textTransform: "uppercase", fontFamily: "'Courier New', monospace", marginBottom: 20 }}>Professor · IIT Bombay</div>
               <div style={{ width: 36, height: 2.5, background: C.teal, borderRadius: 2, marginBottom: 22 }} />
 
@@ -353,8 +347,8 @@ export default function App() {
 
               <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
                 {[
-                  ["Google Scholar ↗", "https://scholar.google.com"],
-                  ["IIT Bombay ↗", "https://www.ee.iitb.ac.in"],
+                  ["Google Scholar ↗", "https://scholar.google.com/citations?user=zqKRsNUAAAAJ&hl=en"],
+                  ["IIT Bombay ↗", "https://www.ee.iitb.ac.in/web/people/d-manjunath/"],
                   ["Email ↗", "mailto:dmanjunath@iitb.ac.in"],
                 ].map(([label, href]) => (
                   <a key={label} href={href} target="_blank" rel="noreferrer" style={{
