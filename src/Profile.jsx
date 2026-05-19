@@ -15,105 +15,95 @@ const C = {
   white:  "#ffffff",
 };
 
-const NAV = ["About", "Publications", "Research", "Professional Activities", "Awards & Distinctions"];
+const NAV = ["About", "Publications", "Research", "Professional Activities", "Awards & Distinctions", "PhD Supervisions", "Funded Projects", "Inventions & Software"];
 
-/* ─── Loader ─────────────────────────────────────────────────── */
 function PageLoader({ done }) {
   const canvasRef = useRef(null);
-
   useEffect(() => {
     const cvs = canvasRef.current;
     if (!cvs) return;
     const ctx = cvs.getContext("2d");
-    const W = cvs.width  = 320;
-    const H = cvs.height = 200;
-
-    const nodes = [
-      { x: 50,  y: 100 }, { x: 130, y: 50  }, { x: 130, y: 150 },
-      { x: 210, y: 50  }, { x: 210, y: 150 }, { x: 270, y: 100 },
-    ];
+    const W = cvs.width = 320, H = cvs.height = 200;
+    const nodes = [{x:50,y:100},{x:130,y:50},{x:130,y:150},{x:210,y:50},{x:210,y:150},{x:270,y:100}];
     const edges = [[0,1],[0,2],[1,3],[1,4],[2,3],[2,4],[3,5],[4,5]];
-    const NODE_DELAY = 18, EDGE_DELAY = 14, PAUSE = 60;
-    const totalFrames = nodes.length * NODE_DELAY + edges.length * EDGE_DELAY + PAUSE;
-    let frame = 0, raf;
-
+    const NODE_DELAY=18, EDGE_DELAY=14, PAUSE=60;
+    const totalFrames = nodes.length*NODE_DELAY + edges.length*EDGE_DELAY + PAUSE;
+    let frame=0, raf;
     const draw = () => {
-      ctx.clearRect(0, 0, W, H);
-      const t = frame % totalFrames;
-      const visibleNodes = Math.min(nodes.length, Math.floor(t / NODE_DELAY));
-      const edgeStart = nodes.length * NODE_DELAY;
-      const visibleEdges = t < edgeStart ? 0 : Math.min(edges.length, Math.floor((t - edgeStart) / EDGE_DELAY));
-
-      for (let i = 0; i < visibleEdges; i++) {
-        const [a, b] = edges[i];
-        const na = nodes[a], nb = nodes[b];
-        const isDrawing = i === visibleEdges - 1 && t < edgeStart + visibleEdges * EDGE_DELAY;
-        let frac = 1;
-        if (isDrawing) frac = ((t - edgeStart) % EDGE_DELAY) / EDGE_DELAY;
-        ctx.strokeStyle = "rgba(255,255,255,0.2)"; ctx.lineWidth = 1;
-        ctx.beginPath(); ctx.moveTo(na.x, na.y); ctx.lineTo(na.x + (nb.x - na.x) * frac, na.y + (nb.y - na.y) * frac); ctx.stroke();
+      ctx.clearRect(0,0,W,H);
+      const t = frame%totalFrames;
+      const visibleNodes = Math.min(nodes.length, Math.floor(t/NODE_DELAY));
+      const edgeStart = nodes.length*NODE_DELAY;
+      const visibleEdges = t<edgeStart ? 0 : Math.min(edges.length, Math.floor((t-edgeStart)/EDGE_DELAY));
+      for (let i=0;i<visibleEdges;i++) {
+        const [a,b]=edges[i]; const na=nodes[a],nb=nodes[b];
+        const isDrawing = i===visibleEdges-1 && t<edgeStart+visibleEdges*EDGE_DELAY;
+        const frac = isDrawing ? ((t-edgeStart)%EDGE_DELAY)/EDGE_DELAY : 1;
+        ctx.strokeStyle="rgba(255,255,255,0.2)"; ctx.lineWidth=1;
+        ctx.beginPath(); ctx.moveTo(na.x,na.y); ctx.lineTo(na.x+(nb.x-na.x)*frac, na.y+(nb.y-na.y)*frac); ctx.stroke();
       }
-
-      for (let i = 0; i < visibleNodes; i++) {
-        const n = nodes[i];
-        const scale = Math.min(1, (t - i * NODE_DELAY) / 10);
-        const r = 7 * scale;
-        const pulse = i < visibleNodes - 1 ? 1 + Math.sin(frame * 0.05 + i * 1.2) * 0.08 : 1;
-        ctx.strokeStyle = "rgba(255,255,255,0.12)"; ctx.lineWidth = 1;
-        ctx.beginPath(); ctx.arc(n.x, n.y, r * 2.2 * pulse, 0, Math.PI * 2); ctx.stroke();
-        ctx.fillStyle = i === 0 || i === nodes.length - 1 ? "rgba(255,255,255,0.75)" : "rgba(255,255,255,0.45)";
-        ctx.beginPath(); ctx.arc(n.x, n.y, r, 0, Math.PI * 2); ctx.fill();
+      for (let i=0;i<visibleNodes;i++) {
+        const n=nodes[i]; const scale=Math.min(1,(t-i*NODE_DELAY)/10); const r=7*scale;
+        const pulse = i<visibleNodes-1 ? 1+Math.sin(frame*0.05+i*1.2)*0.08 : 1;
+        ctx.strokeStyle="rgba(255,255,255,0.12)"; ctx.lineWidth=1;
+        ctx.beginPath(); ctx.arc(n.x,n.y,r*2.2*pulse,0,Math.PI*2); ctx.stroke();
+        ctx.fillStyle = i===0||i===nodes.length-1 ? "rgba(255,255,255,0.75)" : "rgba(255,255,255,0.45)";
+        ctx.beginPath(); ctx.arc(n.x,n.y,r,0,Math.PI*2); ctx.fill();
       }
-
-      frame++; raf = requestAnimationFrame(draw);
+      frame++; raf=requestAnimationFrame(draw);
     };
     draw();
     return () => cancelAnimationFrame(raf);
   }, []);
-
   return (
-    <div style={{ position: "fixed", inset: 0, background: "#07120d", zIndex: 9999, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 24, opacity: done ? 0 : 1, pointerEvents: done ? "none" : "all", transition: "opacity 0.9s ease" }}>
-      <div style={{ fontFamily: "Georgia, serif", fontSize: 26, color: "rgba(255,255,255,0.85)", letterSpacing: "0.04em", fontWeight: "normal" }}>D. Manjunath</div>
+    <div style={{position:"fixed",inset:0,background:"#07120d",zIndex:9999,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:24,opacity:done?0:1,pointerEvents:done?"none":"all",transition:"opacity 0.9s ease"}}>
+      <div style={{fontFamily:"Georgia, serif",fontSize:26,color:"rgba(255,255,255,0.85)",letterSpacing:"0.04em",fontWeight:"normal"}}>D. Manjunath</div>
       <canvas ref={canvasRef} />
-      <div style={{ fontFamily: "'Courier New', monospace", fontSize: 10, color: "rgba(255,255,255,0.2)", letterSpacing: "0.18em", textTransform: "uppercase" }}>Department of Electrical Engineering · IIT Bombay</div>
+      <div style={{fontFamily:"'Courier New', monospace",fontSize:10,color:"rgba(255,255,255,0.2)",letterSpacing:"0.18em",textTransform:"uppercase"}}>Department of Electrical Engineering · IIT Bombay</div>
     </div>
   );
 }
 
-/* ─── Helpers ─────────────────────────────────────────────────── */
 function SectionHead({ children }) {
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: 10, margin: "44px 0 20px" }}>
-      <div style={{ width: 3, height: 18, background: C.teal, borderRadius: 3 }} />
-      <span style={{ fontSize: 10, letterSpacing: "0.16em", textTransform: "uppercase", color: C.teal, fontFamily: "'Courier New', monospace" }}>{children}</span>
+    <div style={{display:"flex",alignItems:"center",gap:10,margin:"44px 0 20px"}}>
+      <div style={{width:3,height:20,background:C.teal,borderRadius:3}} />
+      <span style={{fontSize:13,letterSpacing:"0.08em",textTransform:"uppercase",color:C.teal,fontFamily:"'Courier New', monospace",fontWeight:"bold"}}>{children}</span>
+    </div>
+  );
+}
+
+function PageTitle({ children }) {
+  return (
+    <div style={{textAlign:"center",padding:"48px 0 8px"}}>
+      <span style={{fontSize:11,letterSpacing:"0.2em",textTransform:"uppercase",color:C.teal,fontFamily:"'Courier New', monospace",fontWeight:"bold"}}>{children}</span>
+      <div style={{width:40,height:2,background:C.teal,borderRadius:2,margin:"10px auto 0"}} />
     </div>
   );
 }
 
 function PubItem({ item }) {
   return (
-    <li style={{ padding: "18px 0", borderBottom: `1px solid ${C.pale}`, lineHeight: 1.85, display: "flex", gap: 12 }}>
-      <span style={{ color: C.teal, fontSize: 16, lineHeight: 1.6, flexShrink: 0 }}>•</span>
+    <li style={{padding:"18px 0",borderBottom:`1px solid ${C.pale}`,lineHeight:1.85,display:"flex",gap:12}}>
+      <span style={{color:C.teal,fontSize:16,lineHeight:1.6,flexShrink:0}}>•</span>
       <div>
-        <span style={{ color: C.muted, fontSize: 13.5 }}>{item.authors} </span>
-        <span style={{ fontStyle: "italic", color: C.slate, fontSize: 14 }}>{item.title}</span>
-        <span style={{ color: C.muted, fontSize: 13 }}> {item.venue}</span>
-        {(item.award || item.Award) && <span style={{ display: "inline-block", marginLeft: 8, background: "#fffbeb", color: "#92610a", border: "1px solid #fcd34d", borderRadius: 4, fontSize: 11, padding: "2px 8px" }}>★ {item.award || item.Award}</span>}
-        {item.doi && <a href={item.doi} target="_blank" rel="noreferrer" style={{ marginLeft: 8, fontSize: 11, textDecoration: "none", color: C.teal, border: `1px solid ${C.teal}`, padding: "2px 8px", borderRadius: 4 }}>DOI ↗</a>}
-        {item.note && <div style={{ marginTop: 4, fontSize: 12, color: C.muted, fontStyle: "italic" }}>{item.note}</div>}
+        <span style={{color:C.muted,fontSize:13.5}}>{item.authors} </span>
+        <span style={{fontStyle:"italic",color:C.slate,fontSize:14}}>{item.title}</span>
+        <span style={{color:C.muted,fontSize:13}}> {item.venue}</span>
+        {(item.award||item.Award) && <span style={{display:"inline-block",marginLeft:8,background:"#fffbeb",color:"#92610a",border:"1px solid #fcd34d",borderRadius:4,fontSize:11,padding:"2px 8px"}}>★ {item.award||item.Award}</span>}
+        {item.doi && <a href={item.doi} target="_blank" rel="noreferrer" style={{marginLeft:8,fontSize:11,textDecoration:"none",color:C.teal,border:`1px solid ${C.teal}`,padding:"2px 8px",borderRadius:4}}>DOI ↗</a>}
+        {item.note && <div style={{marginTop:4,fontSize:12,color:C.muted,fontStyle:"italic"}}>{item.note}</div>}
       </div>
     </li>
   );
 }
 
 function TimelineItem({ year, text }) {
-  const isLong = (year || "").length > 6;
+  const isLong = (year||"").length > 6;
   return (
-    <li style={{ display: "flex", gap: 20, padding: "8px 0", borderBottom: `1px solid ${C.pale}` }}>
-      <span style={{ minWidth: 110, color: C.teal, fontWeight: "bold", fontSize: isLong ? 10 : 12, fontFamily: "'Courier New', monospace", paddingTop: isLong ? 4 : 2, flexShrink: 0 }}>
-        {year}
-      </span>
-      <span style={{ color: "#374151", fontSize: 14, lineHeight: 1.75 }}>{text}</span>
+    <li style={{display:"flex",gap:20,padding:"8px 0",borderBottom:`1px solid ${C.pale}`}}>
+      <span style={{minWidth:110,color:C.teal,fontWeight:"bold",fontSize:isLong?10:12,fontFamily:"'Courier New', monospace",paddingTop:isLong?4:2,flexShrink:0}}>{year}</span>
+      <span style={{color:"#374151",fontSize:14,lineHeight:1.75}}>{text}</span>
     </li>
   );
 }
@@ -130,17 +120,15 @@ function useWindowWidth() {
 
 function useCSV(url, setter) {
   useEffect(() => {
-    Papa.parse(url, { download: true, header: true, skipEmptyLines: true, complete: (r) => setter(r.data) });
+    Papa.parse(url, { download:true, header:true, skipEmptyLines:true, complete:(r) => setter(r.data) });
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [url]);
 }
 
-/* ─── Main App ───────────────────────────────────────────────── */
 export default function App() {
   const [active, setActive]         = useState("About");
   const [menuOpen, setMenuOpen]     = useState(false);
   const [loaderDone, setLoaderDone] = useState(false);
-
   const [journals,    setJournals]    = useState([]);
   const [conferences, setConferences] = useState([]);
   const [opeds,       setOpeds]       = useState([]);
@@ -149,6 +137,12 @@ export default function App() {
   const [talks,       setTalks]       = useState([]);
   const [profActs,    setProfActs]    = useState([]);
   const [awards,      setAwards]      = useState([]);
+  const [phd,         setPhd]         = useState([]);
+  const [grad,        setGrad]        = useState([]);
+  const [funded,      setFunded]      = useState([]);
+  const [fundedTech,  setFundedTech]  = useState([]);
+  const [inventions,  setInventions]  = useState([]);
+  const [software,    setSoftware]    = useState([]);
 
   const w = useWindowWidth();
   const isMobile = w < 700;
@@ -163,53 +157,58 @@ export default function App() {
   useCSV("https://docs.google.com/spreadsheets/d/1_zfbe-l28D57WqjQ5cjSh17r5lO2oC62ucKaFzU1VkQ/export?format=csv&gid=1064858605", setTalks);
   useCSV("https://docs.google.com/spreadsheets/d/1UjcSLdGxeAp5EW0zvpAj8wt_A4Za5VAZnBC0qbpG0JY/export?format=csv&gid=0", setProfActs);
   useCSV("https://docs.google.com/spreadsheets/d/1wCI4V2UfLEkuYAUDOFSI_aOyIyAG1MtTc57Z-r1IrOo/export?format=csv&gid=0", setAwards);
+  useCSV("https://docs.google.com/spreadsheets/d/18isc3OTgvuOMMTAmUXkVHZljtL7rjpMSsA1oac9qz6U/export?format=csv&gid=0", setPhd);
+  useCSV("https://docs.google.com/spreadsheets/d/15COZ4wkz5oe6ANPGkRTRbTkFj29bXpR4YzhOCgTEgvA/export?format=csv&gid=0", setGrad);
+  useCSV("https://docs.google.com/spreadsheets/d/1Hyi2UZKMdC9cJBUWQDy8ch3H8IwkPJ1HaQDJxPWP_Dw/export?format=csv&gid=737011902", setFunded);
+  useCSV("https://docs.google.com/spreadsheets/d/1FeLZpUaW4XnQ1MjRWFNBCXjmNGjCTKOufiaV6Fnmvgg/export?format=csv&gid=0", setFundedTech);
+  useCSV("https://docs.google.com/spreadsheets/d/1jfXaQvpYZHmRU1_-bjM73I86dZ9dNZMf_GhJkvfxUTA/export?format=csv&gid=288940565", setSoftware);
+  useCSV("https://docs.google.com/spreadsheets/d/1DtBRvEoBSfJ9OFF_qkpC9cM75EpI90aS_ZZts-45Lo8/export?format=csv&gid=0", setInventions);
 
   const go = (page) => { setActive(page); setMenuOpen(false); };
-  const contentPad = { maxWidth: 1040, margin: "0 auto", padding: isMobile ? "0 18px 60px" : "0 36px 80px", paddingTop: 0 };
+  const contentPad = { maxWidth:1040, margin:"0 auto", padding:isMobile?"0 18px 60px":"0 36px 80px", paddingTop:0 };
 
   return (
-    <div style={{ fontFamily: "Georgia, serif", background: C.bg, color: C.slate, minHeight: "100vh" }}>
+    <div style={{fontFamily:"Georgia, serif",background:C.bg,color:C.slate,minHeight:"100vh"}}>
 
       <PageLoader done={loaderDone} />
 
-      <div style={{ background: C.ink, padding: "7px 24px", color: "#4d8c76", fontSize: 10, letterSpacing: "0.14em", fontFamily: "'Courier New', monospace" }}>
-        DEPARTMENT OF ELECTRICAL ENGINEERING &nbsp;·&nbsp; IIT BOMBAY &nbsp;·&nbsp; CMInDS
+      <div style={{background:C.ink,padding:"7px 24px",color:"#4d8c76",fontSize:10,letterSpacing:"0.14em",fontFamily:"'Courier New', monospace"}}>
+        DEPARTMENT OF ELECTRICAL ENGINEERING {" · "} IIT BOMBAY {" · "} CMInDS
       </div>
 
-      <nav style={{ position: "sticky", top: 0, zIndex: 100, background: C.white, borderBottom: `1px solid ${C.border}`, display: "flex", justifyContent: "center", alignItems: "center", padding: "0 28px", minHeight: 58, boxShadow: "0 1px 12px rgba(0,0,0,0.06)" }}>
+      <nav style={{position:"sticky",top:0,zIndex:100,background:C.white,borderBottom:`1px solid ${C.border}`,display:"flex",justifyContent:"center",alignItems:"center",padding:"0 28px",minHeight:58,boxShadow:"0 1px 12px rgba(0,0,0,0.06)"}}>
         {isMobile ? (
-          <button onClick={() => setMenuOpen(!menuOpen)} style={{ border: `1px solid ${C.border}`, background: C.white, padding: "7px 11px", borderRadius: 6, cursor: "pointer", fontSize: 16 }}>☰</button>
+          <button onClick={() => setMenuOpen(!menuOpen)} style={{border:`1px solid ${C.border}`,background:C.white,padding:"7px 11px",borderRadius:6,cursor:"pointer",fontSize:16}}>☰</button>
         ) : (
-          <div style={{ display: "flex" }}>
+          <div style={{display:"flex"}}>
             {NAV.map(n => (
-              <button key={n} onClick={() => go(n)} style={{ background: "none", border: "none", cursor: "pointer", padding: "18px 10px", fontSize: 12.5, fontFamily: "Georgia, serif", borderBottom: active === n ? `2.5px solid ${C.teal}` : "2.5px solid transparent", color: active === n ? C.teal : C.muted, transition: "color 0.2s", whiteSpace: "nowrap" }}>{n}</button>
+              <button key={n} onClick={() => go(n)} style={{background:"none",border:"none",cursor:"pointer",padding:"18px 10px",fontSize:12.5,fontFamily:"Georgia, serif",borderBottom:active===n?`2.5px solid ${C.teal}`:"2.5px solid transparent",color:active===n?C.teal:C.muted,transition:"color 0.2s",whiteSpace:"nowrap"}}>{n}</button>
             ))}
           </div>
         )}
       </nav>
 
       {isMobile && menuOpen && (
-        <div style={{ background: C.white, borderBottom: `1px solid ${C.border}` }}>
+        <div style={{background:C.white,borderBottom:`1px solid ${C.border}`}}>
           {NAV.map(n => (
-            <button key={n} onClick={() => go(n)} style={{ width: "100%", textAlign: "left", padding: "13px 22px", background: C.white, border: "none", borderBottom: `1px solid ${C.pale}`, fontSize: 14, fontFamily: "Georgia, serif", color: C.slate, cursor: "pointer" }}>{n}</button>
+            <button key={n} onClick={() => go(n)} style={{width:"100%",textAlign:"left",padding:"13px 22px",background:C.white,border:"none",borderBottom:`1px solid ${C.pale}`,fontSize:14,fontFamily:"Georgia, serif",color:C.slate,cursor:"pointer"}}>{n}</button>
           ))}
         </div>
       )}
 
-      {/* HERO */}
-      <div style={{ position: "relative", height: isMobile ? 220 : 290, overflow: "hidden", background: "linear-gradient(135deg, #04180f 0%, #0a3d2e 100%)" }}>
-        <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: 3, background: C.teal, opacity: 0.6 }} />
-        <div style={{ position: "relative", zIndex: 2, height: "100%", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", textAlign: "center", padding: isMobile ? "0 24px" : "0 52px" }}>
-          <div style={{ fontFamily: "'Courier New', monospace", fontSize: 10, letterSpacing: "0.2em", color: C.mint, marginBottom: 10, display: "flex", alignItems: "center", gap: 8 }}>
-            <span style={{ display: "inline-block", width: 28, height: 1, background: C.mint }} />
+      <div style={{position:"relative",height:isMobile?220:290,overflow:"hidden",background:"linear-gradient(135deg, #04180f 0%, #0a3d2e 100%)"}}>
+        <div style={{position:"absolute",left:0,top:0,bottom:0,width:3,background:C.teal,opacity:0.6}} />
+        <div style={{position:"relative",zIndex:2,height:"100%",display:"flex",flexDirection:"column",justifyContent:"center",alignItems:"center",textAlign:"center",padding:isMobile?"0 24px":"0 52px"}}>
+          <div style={{fontFamily:"'Courier New', monospace",fontSize:10,letterSpacing:"0.2em",color:C.mint,marginBottom:10,display:"flex",alignItems:"center",gap:8}}>
+            <span style={{display:"inline-block",width:28,height:1,background:C.mint}} />
             PROFESSOR · DEPT. OF ELECTRICAL ENGINEERING
           </div>
-          <h1 style={{ margin: 0, fontSize: isMobile ? 34 : 50, fontWeight: "bold", color: C.white, letterSpacing: "-0.02em", lineHeight: 1.05 }}>D. Manjunath</h1>
-          <p style={{ margin: "10px 0 0", color: "#7bbba6", fontSize: isMobile ? 13 : 15 }}>IIT Bombay &nbsp;·&nbsp; Head, Centre for Machine Intelligence &amp; Data Science</p>
+          <h1 style={{margin:0,fontSize:isMobile?34:50,fontWeight:"bold",color:C.white,letterSpacing:"-0.02em",lineHeight:1.05}}>D. Manjunath</h1>
+          <p style={{margin:"10px 0 0",color:"#7bbba6",fontSize:isMobile?13:15}}>IIT Bombay {" · "} Head, Centre for Machine Intelligence {"&"} Data Science</p>
           {!isMobile && (
-            <div style={{ display: "flex", gap: 8, marginTop: 20, flexWrap: "wrap", justifyContent: "center" }}>
-              {["Stochastic Systems", "Network Theory", "Queueing Models", "ML & Optimization"].map(t => (
-                <span key={t} style={{ fontSize: 11, padding: "4px 12px", borderRadius: 4, border: "1px solid rgba(29,184,126,0.3)", color: C.mint, fontFamily: "'Courier New', monospace", letterSpacing: "0.05em" }}>{t}</span>
+            <div style={{display:"flex",gap:8,marginTop:20,flexWrap:"wrap",justifyContent:"center"}}>
+              {["Stochastic Systems","Network Theory","Queueing Models","ML & Optimization"].map(t => (
+                <span key={t} style={{fontSize:11,padding:"4px 12px",borderRadius:4,border:"1px solid rgba(29,184,126,0.3)",color:C.mint,fontFamily:"'Courier New', monospace",letterSpacing:"0.05em"}}>{t}</span>
               ))}
             </div>
           )}
@@ -218,40 +217,40 @@ export default function App() {
 
       <div style={contentPad}>
 
-        {/* About */}
+        {/* ── About ── */}
         {active === "About" && (
-          <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "280px 1fr", gap: isMobile ? 28 : 56, alignItems: "start", marginTop: 28 }}>
-            <div style={{ position: "relative" }}>
+          <div style={{display:"grid",gridTemplateColumns:isMobile?"1fr":"280px 1fr",gap:isMobile?28:56,alignItems:"start",marginTop:28}}>
+            <div style={{position:"relative"}}>
               <img src="/cropped.JPG" alt="D. Manjunath"
-                onError={e => { e.target.style.display = "none"; document.getElementById("prof-fallback").style.display = "flex"; }}
-                style={{ width: "100%", aspectRatio: "3/4", objectFit: "cover", objectPosition: "center 35%", borderRadius: 14, display: "block", position: "relative", zIndex: 1, border: `1px solid ${C.border}` }}
+                onError={e => { e.target.style.display="none"; document.getElementById("prof-fallback").style.display="flex"; }}
+                style={{width:"100%",aspectRatio:"3/4",objectFit:"cover",objectPosition:"center 35%",borderRadius:14,display:"block",position:"relative",zIndex:1,border:`1px solid ${C.border}`}}
               />
-              <div id="prof-fallback" style={{ display: "none", width: "100%", aspectRatio: "3/4", background: `linear-gradient(160deg, #0d3a26, ${C.teal})`, borderRadius: 14, alignItems: "center", justifyContent: "center", position: "relative", zIndex: 1, border: `1px solid ${C.border}`, flexDirection: "column", gap: 10 }}>
-                <div style={{ width: 72, height: 72, borderRadius: "50%", background: "rgba(255,255,255,0.15)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  <span style={{ fontSize: 28, color: "rgba(255,255,255,0.7)" }}>DM</span>
+              <div id="prof-fallback" style={{display:"none",width:"100%",aspectRatio:"3/4",background:`linear-gradient(160deg, #0d3a26, ${C.teal})`,borderRadius:14,alignItems:"center",justifyContent:"center",position:"relative",zIndex:1,border:`1px solid ${C.border}`,flexDirection:"column",gap:10}}>
+                <div style={{width:72,height:72,borderRadius:"50%",background:"rgba(255,255,255,0.15)",display:"flex",alignItems:"center",justifyContent:"center"}}>
+                  <span style={{fontSize:28,color:"rgba(255,255,255,0.7)"}}>DM</span>
                 </div>
               </div>
             </div>
             <div>
-              <div style={{ fontSize: isMobile ? 26 : 32, fontWeight: "bold", color: "#0a3d2e", letterSpacing: "-0.01em", marginBottom: 4 }}>D. Manjunath</div>
-              <div style={{ fontSize: 11, color: C.teal, letterSpacing: "0.1em", textTransform: "uppercase", fontFamily: "'Courier New', monospace", marginBottom: 20 }}>Professor · IIT Bombay</div>
-              <div style={{ width: 36, height: 2.5, background: C.teal, borderRadius: 2, marginBottom: 22 }} />
-              {["I am a Professor at the Department of Electrical Engineering, IIT Bombay, and the Head of the Centre for Machine Intelligence and Data Science (CMInDS).", "My research spans computer and communication networks, queueing theory, stochastic systems, performance modeling, network economics, distributed optimization, and learning systems.", "Current work focuses on stochastic models for large-scale systems, resource allocation, recommendation systems, and data-driven optimization in networked environments."].map((p, i) => (
-                <p key={i} style={{ lineHeight: 1.9, color: "#374151", fontSize: isMobile ? 14.5 : 15.5, marginBottom: 16 }}>{p}</p>
+              <div style={{fontSize:isMobile?26:32,fontWeight:"bold",color:"#0a3d2e",letterSpacing:"-0.01em",marginBottom:4}}>D. Manjunath</div>
+              <div style={{fontSize:11,color:C.teal,letterSpacing:"0.1em",textTransform:"uppercase",fontFamily:"'Courier New', monospace",marginBottom:20}}>Professor · IIT Bombay</div>
+              <div style={{width:36,height:2.5,background:C.teal,borderRadius:2,marginBottom:22}} />
+              {["I am a Professor at the Department of Electrical Engineering, IIT Bombay, and the Head of the Centre for Machine Intelligence and Data Science (CMInDS).","My research spans computer and communication networks, queueing theory, stochastic systems, performance modeling, network economics, distributed optimization, and learning systems.","Current work focuses on stochastic models for large-scale systems, resource allocation, recommendation systems, and data-driven optimization in networked environments."].map((p,i) => (
+                <p key={i} style={{lineHeight:1.9,color:"#374151",fontSize:isMobile?14.5:15.5,marginBottom:16}}>{p}</p>
               ))}
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, margin: "22px 0" }}>
-                {[["Department", "Electrical Engineering"], ["Centre", "CMInDS"], ["Research", "Networks & Stochastic Systems"], ["Institution", "IIT Bombay"]].map(([label, val]) => (
-                  <div key={label} style={{ background: C.white, border: `1px solid ${C.border}`, borderLeft: `3px solid ${C.teal}`, borderRadius: 8, padding: "12px 14px" }}>
-                    <div style={{ fontSize: 10, letterSpacing: "0.1em", textTransform: "uppercase", color: C.teal, fontFamily: "'Courier New', monospace", marginBottom: 4 }}>{label}</div>
-                    <div style={{ fontSize: 13, color: C.slate, lineHeight: 1.5 }}>{val}</div>
+              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,margin:"22px 0"}}>
+                {[["Department","Electrical Engineering"],["Centre","CMInDS"],["Research","Networks & Stochastic Systems"],["Institution","IIT Bombay"]].map(([label,val]) => (
+                  <div key={label} style={{background:C.white,border:`1px solid ${C.border}`,borderLeft:`3px solid ${C.teal}`,borderRadius:8,padding:"12px 14px"}}>
+                    <div style={{fontSize:10,letterSpacing:"0.1em",textTransform:"uppercase",color:C.teal,fontFamily:"'Courier New', monospace",marginBottom:4}}>{label}</div>
+                    <div style={{fontSize:13,color:C.slate,lineHeight:1.5}}>{val}</div>
                   </div>
                 ))}
               </div>
-              <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-                {[["Google Scholar ↗", "https://scholar.google.com"], ["IIT Bombay ↗", "https://www.ee.iitb.ac.in"], ["Email ↗", "mailto:dmanjunath@iitb.ac.in"]].map(([label, href]) => (
-                  <a key={label} href={href} target="_blank" rel="noreferrer" style={{ textDecoration: "none", border: `1.5px solid ${C.teal}`, color: C.teal, padding: "9px 16px", borderRadius: 7, fontSize: 13, transition: "all 0.2s", display: "inline-block" }}
-                    onMouseEnter={e => { e.target.style.background = C.teal; e.target.style.color = "#fff"; }}
-                    onMouseLeave={e => { e.target.style.background = "transparent"; e.target.style.color = C.teal; }}
+              <div style={{display:"flex",gap:10,flexWrap:"wrap"}}>
+                {[["Google Scholar ↗","https://scholar.google.com"],["IIT Bombay ↗","https://www.ee.iitb.ac.in"],["Email ↗","mailto:dmanjunath@iitb.ac.in"]].map(([label,href]) => (
+                  <a key={label} href={href} target="_blank" rel="noreferrer" style={{textDecoration:"none",border:`1.5px solid ${C.teal}`,color:C.teal,padding:"9px 16px",borderRadius:7,fontSize:13,transition:"all 0.2s",display:"inline-block"}}
+                    onMouseEnter={e => { e.target.style.background=C.teal; e.target.style.color="#fff"; }}
+                    onMouseLeave={e => { e.target.style.background="transparent"; e.target.style.color=C.teal; }}
                   >{label}</a>
                 ))}
               </div>
@@ -259,95 +258,91 @@ export default function App() {
           </div>
         )}
 
-        {/* Publications */}
+        {/* ── Publications ── */}
         {active === "Publications" && (
           <>
+            <PageTitle>Publications</PageTitle>
             <SectionHead>Pre-print Publications</SectionHead>
-            <ul style={{ listStyle: "none", padding: 0 }}>
-              {preprint.length === 0 ? <li style={{ color: C.muted, fontSize: 13, padding: "16px 0" }}>Loading…</li> : preprint.map((item, i) => <PubItem key={i} item={item} />)}
+            <ul style={{listStyle:"none",padding:0}}>
+              {preprint.length===0 ? <li style={{color:C.muted,fontSize:13,padding:"16px 0"}}>Loading...</li> : preprint.map((item,i) => <PubItem key={i} item={item} />)}
             </ul>
             <SectionHead>Journal Articles</SectionHead>
-            <ul style={{ listStyle: "none", padding: 0 }}>
-              {journals.length === 0 ? <li style={{ color: C.muted, fontSize: 13, padding: "16px 0" }}>Loading…</li> : journals.map((item, i) => <PubItem key={i} item={item} />)}
+            <ul style={{listStyle:"none",padding:0}}>
+              {journals.length===0 ? <li style={{color:C.muted,fontSize:13,padding:"16px 0"}}>Loading...</li> : journals.map((item,i) => <PubItem key={i} item={item} />)}
             </ul>
             <SectionHead>Conference Papers</SectionHead>
-            <ul style={{ listStyle: "none", padding: 0 }}>
-              {conferences.length === 0 ? <li style={{ color: C.muted, fontSize: 13, padding: "16px 0" }}>Loading…</li> : conferences.map((item, i) => <PubItem key={i} item={item} />)}
+            <ul style={{listStyle:"none",padding:0}}>
+              {conferences.length===0 ? <li style={{color:C.muted,fontSize:13,padding:"16px 0"}}>Loading...</li> : conferences.map((item,i) => <PubItem key={i} item={item} />)}
+            </ul>
+            <SectionHead>Op-eds</SectionHead>
+            <ul style={{listStyle:"none",padding:0}}>
+              {opeds.length===0 ? <li style={{color:C.muted,fontSize:13,padding:"16px 0"}}>Loading...</li> : opeds.map((item,i) => <TimelineItem key={i} year={item.year||item.period} text={item.text||item.title||item.award} />)}
+            </ul>
+            <SectionHead>Books</SectionHead>
+            <ul style={{listStyle:"none",padding:0}}>
+              {books.length===0 ? <li style={{color:C.muted,fontSize:13,padding:"16px 0"}}>Loading...</li> : books.map((item,i) => <TimelineItem key={i} year={item.year||item.period} text={item.text||item.role||item.title} />)}
+            </ul>
+            <SectionHead>Refereed Conferences</SectionHead>
+            <ul style={{listStyle:"none",padding:0}}>
+              {talks.length===0 ? <li style={{color:C.muted,fontSize:13,padding:"16px 0"}}>Loading...</li> : talks.map((item,i) => <TimelineItem key={i} year={item.year||item.period} text={item.text||item.title} />)}
             </ul>
           </>
         )}
 
-        {/* Research */}
+        {/* ── Research ── */}
         {active === "Research" && (
           <>
+            <PageTitle>Research</PageTitle>
             <SectionHead>Research Interests</SectionHead>
-            <p style={{ lineHeight: 1.9, color: "#374151", fontSize: 15, marginBottom: 24, marginTop: 8 }}>My work lies at the intersection of probability theory, network science, and machine learning — building rigorous analytical and data-driven models for real-world systems at scale.</p>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-              {["Computer Networks", "Communication Networks", "Queueing Theory", "Stochastic Systems", "Performance Modeling", "Network Economics", "Distributed Optimization", "Recommendation Systems", "Resource Allocation", "Learning Systems", "Data-Driven Optimization", "Large-Scale Systems"].map(tag => (
-                <span key={tag} style={{ padding: "7px 14px", borderRadius: 7, fontSize: 13, background: C.pale, color: C.forest, border: `1px solid ${C.border}` }}>{tag}</span>
+            <p style={{lineHeight:1.9,color:"#374151",fontSize:15,marginBottom:24,marginTop:8}}>My work lies at the intersection of probability theory, network science, and machine learning — building rigorous analytical and data-driven models for real-world systems at scale.</p>
+            <div style={{display:"flex",flexWrap:"wrap",gap:8}}>
+              {["Computer Networks","Communication Networks","Queueing Theory","Stochastic Systems","Performance Modeling","Network Economics","Distributed Optimization","Recommendation Systems","Resource Allocation","Learning Systems","Data-Driven Optimization","Large-Scale Systems"].map(tag => (
+                <span key={tag} style={{padding:"7px 14px",borderRadius:7,fontSize:13,background:C.pale,color:C.forest,border:`1px solid ${C.border}`}}>{tag}</span>
               ))}
             </div>
             <SectionHead>Current Focus Areas</SectionHead>
-            <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 14 }}>
-              {[{ title: "Stochastic Models", desc: "Rigorous probabilistic models for large-scale network systems and queues." }, { title: "Resource Allocation", desc: "Optimal and near-optimal policies for resource distribution in dynamic environments." }, { title: "Recommendation Systems", desc: "Theory and algorithms for personalized recommendations at scale." }, { title: "Data-Driven Optimization", desc: "Combining statistical learning with classical optimization in networked settings." }].map(({ title, desc }) => (
-                <div key={title} style={{ background: C.white, border: `1px solid ${C.border}`, borderTop: `3px solid ${C.teal}`, borderRadius: 10, padding: "18px 20px" }}>
-                  <div style={{ fontWeight: "bold", color: C.forest, fontSize: 15, marginBottom: 8 }}>{title}</div>
-                  <div style={{ color: "#4b5563", fontSize: 13.5, lineHeight: 1.75 }}>{desc}</div>
+            <div style={{display:"grid",gridTemplateColumns:isMobile?"1fr":"1fr 1fr",gap:14}}>
+              {[{title:"Stochastic Models",desc:"Rigorous probabilistic models for large-scale network systems and queues."},{title:"Resource Allocation",desc:"Optimal and near-optimal policies for resource distribution in dynamic environments."},{title:"Recommendation Systems",desc:"Theory and algorithms for personalized recommendations at scale."},{title:"Data-Driven Optimization",desc:"Combining statistical learning with classical optimization in networked settings."}].map(({title,desc}) => (
+                <div key={title} style={{background:C.white,border:`1px solid ${C.border}`,borderTop:`3px solid ${C.teal}`,borderRadius:10,padding:"18px 20px"}}>
+                  <div style={{fontWeight:"bold",color:C.forest,fontSize:15,marginBottom:8}}>{title}</div>
+                  <div style={{color:"#4b5563",fontSize:13.5,lineHeight:1.75}}>{desc}</div>
                 </div>
               ))}
             </div>
           </>
         )}
 
-        {/* Professional Activities */}
+        {/* ── Professional Activities ── */}
         {active === "Professional Activities" && (
           <>
-            <SectionHead>Op-eds</SectionHead>
-            <ul style={{ listStyle: "none", padding: 0 }}>
-              {opeds.length === 0 ? <li style={{ color: C.muted, fontSize: 13, padding: "16px 0" }}>Loading…</li> : opeds.map((item, i) => <TimelineItem key={i} year={item.year || item.period} text={item.text || item.title || item.award} />)}
-            </ul>
-            <SectionHead>Books</SectionHead>
-            <ul style={{ listStyle: "none", padding: 0 }}>
-              {books.length === 0 ? <li style={{ color: C.muted, fontSize: 13, padding: "16px 0" }}>Loading…</li> : books.map((item, i) => <TimelineItem key={i} year={item.year || item.period} text={item.text || item.role || item.title} />)}
-            </ul>
-            <SectionHead>Refereed Conferences</SectionHead>
-            <ul style={{ listStyle: "none", padding: 0 }}>
-              {talks.length === 0 ? <li style={{ color: C.muted, fontSize: 13, padding: "16px 0" }}>Loading…</li> : talks.map((item, i) => <TimelineItem key={i} year={item.year || item.period} text={item.text || item.title} />)}
-            </ul>
-            <SectionHead>Selected Professional Activities</SectionHead>
-            {profActs.length === 0
-              ? <p style={{ color: C.muted, fontSize: 13, padding: "16px 0" }}>Loading…</p>
+            <PageTitle>Professional Activities</PageTitle>
+            
+            {profActs.length===0
+              ? <p style={{color:C.muted,fontSize:13,padding:"16px 0"}}>Loading...</p>
               : (() => {
-                  const knownCategories = ["Organiser", "Editorial", "Board Membership", "Conference Leadership", "Refereeing - IEEE Journals", "Refereeing - ACM Journals", "Refereeing - CS and Mathematics", "Refereeing - Operations Research", "Refereeing - Other Journals", "Refereeing - IEEE Conferences", "Refereeing - ACM Conferences", "Refereeing - Other Conferences", "Refereeing", "TPC Member", "IEEE Membership", "Conference Participation"];
+                  const knownCategories = ["Organiser","Editorial","Board Membership","Conference Leadership","Refereeing - IEEE Journals","Refereeing - ACM Journals","Refereeing - CS and Mathematics","Refereeing - Operations Research","Refereeing - Other Journals","Refereeing - IEEE Conferences","Refereeing - ACM Conferences","Refereeing - Other Conferences","Refereeing","TPC Member","IEEE Membership","Conference Participation"];
                   const parsed = profActs.map(item => {
                     const cols = Object.values(item);
-                    const colA = (cols[0] || "").trim();
-                    const colB = (cols[1] || "").trim();
-                    const colC = (cols[2] || "").trim();
-                    let category = "Other", activity = colA;
+                    const colA=(cols[0]||"").trim(), colB=(cols[1]||"").trim(), colC=(cols[2]||"").trim();
+                    let category="Other", activity=colA;
                     for (const cat of knownCategories) {
-                      if (colA.startsWith(cat)) {
-                        category = cat.startsWith("Refereeing -") ? "Refereeing" : cat;
-                        activity = colA.slice(cat.length).trim();
-                        break;
-                      }
+                      if (colA.startsWith(cat)) { category=cat.startsWith("Refereeing -")?"Refereeing":cat; activity=colA.slice(cat.length).trim(); break; }
                     }
-                    return { category, activity: [activity, colB, colC].filter(Boolean).join(", ") };
+                    return { category, activity:[activity,colB,colC].filter(Boolean).join(", ") };
                   });
-                  const groups = [];
-                  const seen = {};
-                  parsed.forEach(({ category, activity }) => {
-                    if (!seen[category]) { seen[category] = true; groups.push({ category, items: [] }); }
-                    groups.find(g => g.category === category).items.push(activity);
+                  const groups=[], seen={};
+                  parsed.forEach(({category,activity}) => {
+                    if (!seen[category]) { seen[category]=true; groups.push({category,items:[]}); }
+                    groups.find(g=>g.category===category).items.push(activity);
                   });
-                  return groups.map(({ category, items }) => (
+                  return groups.map(({category,items}) => (
                     <div key={category}>
                       <SectionHead>{category}</SectionHead>
-                      <ul style={{ listStyle: "none", padding: 0 }}>
-                        {items.map((activity, i) => (
-                          <li key={i} style={{ display: "flex", gap: 12, padding: "10px 0", borderBottom: `1px solid ${C.pale}`, lineHeight: 1.75 }}>
-                            <span style={{ color: C.teal, fontSize: 16, lineHeight: 1.6, flexShrink: 0 }}>•</span>
-                            <span style={{ color: "#374151", fontSize: 14 }}>{activity}</span>
+                      <ul style={{listStyle:"none",padding:0}}>
+                        {items.map((activity,i) => (
+                          <li key={i} style={{display:"flex",gap:12,padding:"10px 0",borderBottom:`1px solid ${C.pale}`,lineHeight:1.75}}>
+                            <span style={{color:C.teal,fontSize:16,lineHeight:1.6,flexShrink:0}}>•</span>
+                            <span style={{color:"#374151",fontSize:14}}>{activity}</span>
                           </li>
                         ))}
                       </ul>
@@ -358,27 +353,136 @@ export default function App() {
           </>
         )}
 
-        {/* Awards & Distinctions */}
+        {/* ── Awards ── */}
         {active === "Awards & Distinctions" && (
           <>
-            <SectionHead>Awards &amp; Distinctions</SectionHead>
-            <div style={{ display: "flex", gap: 20, padding: "8px 0", borderBottom: `2px solid ${C.border}`, marginBottom: 4 }}>
-              <span style={{ minWidth: 110, fontSize: 11, fontFamily: "'Courier New', monospace", color: C.teal, letterSpacing: "0.1em", textTransform: "uppercase", flexShrink: 0 }}>Year</span>
-              <span style={{ fontSize: 11, fontFamily: "'Courier New', monospace", color: C.teal, letterSpacing: "0.1em", textTransform: "uppercase" }}>Award</span>
+            <PageTitle>Awards & Distinctions</PageTitle>
+            <div style={{display:"flex",gap:20,padding:"8px 0",borderBottom:`2px solid ${C.border}`,marginBottom:4,marginTop:32}}>
+              <span style={{minWidth:110,fontSize:11,fontFamily:"'Courier New', monospace",color:C.teal,letterSpacing:"0.1em",textTransform:"uppercase",flexShrink:0}}>Year</span>
+              <span style={{fontSize:11,fontFamily:"'Courier New', monospace",color:C.teal,letterSpacing:"0.1em",textTransform:"uppercase"}}>Award</span>
             </div>
-            <ul style={{ listStyle: "none", padding: 0 }}>
-              {awards.length === 0
-                ? <li style={{ color: C.muted, fontSize: 13, padding: "16px 0" }}>Loading…</li>
-                : awards.map((item, i) => <TimelineItem key={i} year={item.Year} text={item.Award} />)
-              }
+            <ul style={{listStyle:"none",padding:0}}>
+              {awards.length===0 ? <li style={{color:C.muted,fontSize:13,padding:"16px 0"}}>Loading...</li> : awards.map((item,i) => <TimelineItem key={i} year={item.Year} text={item.Award} />)}
+            </ul>
+          </>
+        )}
+
+        {/* ── PhD Supervisions ── */}
+        {active === "PhD Supervisions" && (
+          <>
+            <PageTitle>PhD Supervisions</PageTitle>
+            <SectionHead>PhD Supervisions: Completed</SectionHead>
+            <div style={{display:"flex",gap:20,padding:"8px 0",borderBottom:`2px solid ${C.border}`,marginBottom:4}}>
+              <span style={{minWidth:50,fontSize:11,fontFamily:"'Courier New', monospace",color:C.teal,letterSpacing:"0.1em",textTransform:"uppercase",flexShrink:0}}>Year</span>
+              <span style={{minWidth:160,fontSize:11,fontFamily:"'Courier New', monospace",color:C.teal,letterSpacing:"0.1em",textTransform:"uppercase",flexShrink:0}}>Student</span>
+              <span style={{fontSize:11,fontFamily:"'Courier New', monospace",color:C.teal,letterSpacing:"0.1em",textTransform:"uppercase"}}>Thesis</span>
+            </div>
+            <ul style={{listStyle:"none",padding:0}}>
+              {phd.length===0 ? <li style={{color:C.muted,fontSize:13,padding:"16px 0"}}>Loading...</li> : phd.map((item,i) => (
+                <li key={i} style={{display:"flex",gap:20,padding:"10px 0",borderBottom:`1px solid ${C.pale}`,lineHeight:1.75}}>
+                  <span style={{minWidth:50,color:C.teal,fontWeight:"bold",fontSize:12,fontFamily:"'Courier New', monospace",paddingTop:2,flexShrink:0}}>{item.Year}</span>
+                  <span style={{minWidth:160,color:C.forest,fontSize:14,fontWeight:"bold",flexShrink:0}}>{item.Student}</span>
+                  <span style={{color:"#374151",fontSize:14}}>{item["Thesis Title"]}{item.Institution ? ", "+item.Institution : ""}</span>
+                </li>
+              ))}
+            </ul>
+            <SectionHead>Graduate Thesis Supervisions</SectionHead>
+            <div style={{display:"flex",gap:20,padding:"8px 0",borderBottom:`2px solid ${C.border}`,marginBottom:4}}>
+              <span style={{minWidth:50,fontSize:11,fontFamily:"'Courier New', monospace",color:C.teal,letterSpacing:"0.1em",textTransform:"uppercase",flexShrink:0}}>Year</span>
+              <span style={{minWidth:200,fontSize:11,fontFamily:"'Courier New', monospace",color:C.teal,letterSpacing:"0.1em",textTransform:"uppercase",flexShrink:0}}>Student</span>
+              <span style={{minWidth:130,fontSize:11,fontFamily:"'Courier New', monospace",color:C.teal,letterSpacing:"0.1em",textTransform:"uppercase",flexShrink:0}}>Type</span>
+              <span style={{fontSize:11,fontFamily:"'Courier New', monospace",color:C.teal,letterSpacing:"0.1em",textTransform:"uppercase"}}>Thesis</span>
+            </div>
+            <ul style={{listStyle:"none",padding:0}}>
+              {grad.length===0 ? <li style={{color:C.muted,fontSize:13,padding:"16px 0"}}>Loading...</li> : grad.map((item,i) => (
+                <li key={i} style={{display:"flex",gap:20,padding:"10px 0",borderBottom:`1px solid ${C.pale}`,lineHeight:1.75}}>
+                  <span style={{minWidth:50,color:C.teal,fontWeight:"bold",fontSize:12,fontFamily:"'Courier New', monospace",paddingTop:2,flexShrink:0}}>{item.Year}</span>
+                  <span style={{minWidth:200,color:C.forest,fontSize:13.5,fontWeight:"bold",flexShrink:0}}>{item.Student}</span>
+                  <span style={{minWidth:130,color:C.muted,fontSize:12,flexShrink:0}}>{item.Type}</span>
+                  <span style={{color:"#374151",fontSize:14}}>{item["Thesis Title"]}</span>
+                </li>
+              ))}
+            </ul>
+          </>
+        )}
+
+        {/* ── Funded Projects ── */}
+        {active === "Funded Projects" && (
+          <>
+            <PageTitle>Funded Projects</PageTitle>
+            <SectionHead>Research & Development Projects</SectionHead>
+            <div style={{display:"flex",gap:20,padding:"8px 0",borderBottom:`2px solid ${C.border}`,marginBottom:4}}>
+              <span style={{minWidth:180,fontSize:11,fontFamily:"'Courier New', monospace",color:C.teal,letterSpacing:"0.1em",textTransform:"uppercase",flexShrink:0}}>Role</span>
+              <span style={{minWidth:90,fontSize:11,fontFamily:"'Courier New', monospace",color:C.teal,letterSpacing:"0.1em",textTransform:"uppercase",flexShrink:0}}>Period</span>
+              <span style={{flex:2,fontSize:11,fontFamily:"'Courier New', monospace",color:C.teal,letterSpacing:"0.1em",textTransform:"uppercase"}}>Project</span>
+              <span style={{flex:1,fontSize:11,fontFamily:"'Courier New', monospace",color:C.teal,letterSpacing:"0.1em",textTransform:"uppercase"}}>Funder</span>
+            </div>
+            <ul style={{listStyle:"none",padding:0}}>
+              {funded.length===0 ? <li style={{color:C.muted,fontSize:13,padding:"16px 0"}}>Loading...</li> : funded.map((item,i) => (
+                <li key={i} style={{display:"flex",gap:20,padding:"10px 0",borderBottom:`1px solid ${C.pale}`,lineHeight:1.75}}>
+                  <span style={{minWidth:180,color:C.teal,fontWeight:"bold",fontSize:12,fontFamily:"'Courier New', monospace",paddingTop:2,flexShrink:0}}>{item.Role}</span>
+                  <span style={{minWidth:90,color:C.muted,fontSize:13,flexShrink:0,paddingTop:2}}>{item.Period}</span>
+                  <span style={{flex:2,color:"#374151",fontSize:14}}>{item.Project}</span>
+                  <span style={{flex:1,color:C.muted,fontSize:13}}>{item.Funder}</span>
+                </li>
+              ))}
+            </ul>
+            <SectionHead>Technology Deployment Projects</SectionHead>
+            <div style={{display:"flex",gap:20,padding:"8px 0",borderBottom:`2px solid ${C.border}`,marginBottom:4}}>
+              <span style={{minWidth:180,fontSize:11,fontFamily:"'Courier New', monospace",color:C.teal,letterSpacing:"0.1em",textTransform:"uppercase",flexShrink:0}}>Role</span>
+              <span style={{minWidth:90,fontSize:11,fontFamily:"'Courier New', monospace",color:C.teal,letterSpacing:"0.1em",textTransform:"uppercase",flexShrink:0}}>Period</span>
+              <span style={{flex:2,fontSize:11,fontFamily:"'Courier New', monospace",color:C.teal,letterSpacing:"0.1em",textTransform:"uppercase"}}>Project</span>
+              <span style={{flex:1,fontSize:11,fontFamily:"'Courier New', monospace",color:C.teal,letterSpacing:"0.1em",textTransform:"uppercase"}}>Funder</span>
+            </div>
+            <ul style={{listStyle:"none",padding:0}}>
+              {fundedTech.length===0 ? <li style={{color:C.muted,fontSize:13,padding:"16px 0"}}>Loading...</li> : fundedTech.map((item,i) => (
+                <li key={i} style={{display:"flex",gap:20,padding:"10px 0",borderBottom:`1px solid ${C.pale}`,lineHeight:1.75}}>
+                  <span style={{minWidth:180,color:C.teal,fontWeight:"bold",fontSize:12,fontFamily:"'Courier New', monospace",paddingTop:2,flexShrink:0}}>{item.Role}</span>
+                  <span style={{minWidth:90,color:C.muted,fontSize:13,flexShrink:0,paddingTop:2}}>{item.Period}</span>
+                  <span style={{flex:2,color:"#374151",fontSize:14}}>{item.Project}</span>
+                  <span style={{flex:1,color:C.muted,fontSize:13}}>{item.Funder}</span>
+                </li>
+              ))}
+            </ul>
+          </>
+        )}
+
+        {/* ── Inventions & Software ── */}
+        {active === "Inventions & Software" && (
+          <>
+            <PageTitle>Inventions & Software</PageTitle>
+            <SectionHead>Inventions</SectionHead>
+            <ul style={{listStyle:"none",padding:0}}>
+              {inventions.length===0 ? <li style={{color:C.muted,fontSize:13,padding:"16px 0"}}>Loading...</li> : inventions.map((item,i) => (
+                <li key={i} style={{display:"flex",gap:12,padding:"14px 0",borderBottom:`1px solid ${C.pale}`,lineHeight:1.75}}>
+                  <span style={{color:C.teal,fontSize:16,lineHeight:1.6,flexShrink:0}}>•</span>
+                  <div>
+                    <span style={{color:C.forest,fontSize:14,fontWeight:"bold"}}>{item.Authors} </span>
+                    <span style={{color:C.slate,fontSize:14}}>{item.Title}</span>
+                    {item.Details && <div style={{color:C.muted,fontSize:13,marginTop:3}}>{item.Details}</div>}
+                  </div>
+                </li>
+              ))}
+            </ul>
+            <SectionHead>Software Developed</SectionHead>
+            <ul style={{listStyle:"none",padding:0}}>
+              {software.length===0 ? <li style={{color:C.muted,fontSize:13,padding:"16px 0"}}>Loading...</li> : software.map((item,i) => (
+                <li key={i} style={{display:"flex",gap:12,padding:"14px 0",borderBottom:`1px solid ${C.pale}`,lineHeight:1.75}}>
+                  <span style={{color:C.teal,fontSize:16,lineHeight:1.6,flexShrink:0}}>•</span>
+                  <div>
+                    <span style={{color:C.forest,fontSize:14,fontWeight:"bold"}}>{item.Name}</span>
+                    {item.Description && <div style={{color:"#374151",fontSize:14,marginTop:3}}>{item.Description}</div>}
+                  </div>
+                </li>
+              ))}
             </ul>
           </>
         )}
 
       </div>
 
-      <div style={{ background: C.white, borderTop: `1px solid ${C.border}`, padding: "20px 28px", textAlign: "center", fontSize: 11, color: C.muted, fontFamily: "'Courier New', monospace", letterSpacing: "0.08em" }}>
-        © D. MANJUNATH &nbsp;·&nbsp; IIT BOMBAY &nbsp;·&nbsp; DEPARTMENT OF ELECTRICAL ENGINEERING
+      <div style={{background:C.white,borderTop:`1px solid ${C.border}`,padding:"20px 28px",textAlign:"center",fontSize:11,color:C.muted,fontFamily:"'Courier New', monospace",letterSpacing:"0.08em"}}>
+        {"© D. MANJUNATH · IIT BOMBAY · DEPARTMENT OF ELECTRICAL ENGINEERING"}
       </div>
 
     </div>
