@@ -15,7 +15,7 @@ const C = {
   white:  "#ffffff",
 };
 
-const NAV = ["About", "Publications", "Research", "Professional Activities", "Awards & Distinctions", "PhD Supervisions", "Funded Projects", "Inventions & Software"];
+const NAV = ["About", "Publications", "Research", "Professional Activities", "Awards & Distinctions", "Students", "Funded Projects", "Inventions & Software"];
 
 function PageLoader({ done }) {
   const canvasRef = useRef(null);
@@ -368,9 +368,9 @@ export default function App() {
         )}
 
         {/* ── PhD Supervisions ── */}
-        {active === "PhD Supervisions" && (
+        {active === "Students" && (
           <>
-            <PageTitle>PhD Supervisions</PageTitle>
+            <PageTitle>Students</PageTitle>
             <SectionHead>PhD Supervisions: Completed</SectionHead>
             <div style={{display:"flex",gap:20,padding:"8px 0",borderBottom:`2px solid ${C.border}`,marginBottom:4}}>
               <span style={{minWidth:50,fontSize:11,fontFamily:"'Courier New', monospace",color:C.teal,letterSpacing:"0.1em",textTransform:"uppercase",flexShrink:0}}>Year</span>
