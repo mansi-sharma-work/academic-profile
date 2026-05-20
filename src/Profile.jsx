@@ -229,21 +229,21 @@ export default function App() {
             ))}
           </div>
         )}
-        {isMobile && menuOpen && (
-          <div style={{borderTop:`1px solid ${C.border}`}}>
-            {NAV.map(n => (
-              <button key={n} onClick={() => go(n)} style={{
-                width:"100%",textAlign:"left",padding:"14px 20px",
-                background:active===n?C.pale:C.white,
-                border:"none",borderBottom:`1px solid ${C.pale}`,
-                fontSize:14,fontFamily:"Georgia, serif",
-                color:active===n?C.teal:C.slate,
-                fontWeight:active===n?"bold":"normal",
-                cursor:"pointer",
-              }}>{n}</button>
-            ))}
-          </div>
-        )}
+      {isMobile && menuOpen && (
+        <div style={{background:C.white,borderBottom:`1px solid ${C.border}`}}>
+          {NAV.map(n => (
+            <button key={n} onClick={() => go(n)} style={{
+              width:"100%",textAlign:"left",padding:"14px 20px",
+              background:active===n?C.pale:C.white,
+              border:"none",borderBottom:`1px solid ${C.pale}`,
+              fontSize:14,fontFamily:"Georgia, serif",
+              color:active===n?C.teal:C.slate,
+              fontWeight:active===n?"bold":"normal",
+              cursor:"pointer",
+            }}>{n}</button>
+          ))}
+        </div>
+      )}
       </nav>
 
       {/* HERO */}
@@ -422,38 +422,66 @@ export default function App() {
           <>
             <PageTitle>Students</PageTitle>
             <SectionHead>PhD Supervisions: Completed</SectionHead>
-            <ColRow>
-              <CH w={60}>Year</CH>
-              <CH w={180}>Student</CH>
-              <CH>Thesis</CH>
-            </ColRow>
-            <ul style={{listStyle:"none",padding:0}}>
-              {phd.length===0 ? <li style={{color:C.muted,fontSize:13,padding:"16px 0"}}>Loading...</li> : phd.map((item,i) => (
-                <DataRow key={i}>
-                  <DC w={60} color={C.teal} mono>{item.Year}</DC>
-                  <DC w={180} color={C.forest}>{item.Student}</DC>
-                  <DC>{item["Thesis Title"]}{item.Institution ? ", "+item.Institution : ""}</DC>
-                </DataRow>
-              ))}
-            </ul>
+            {isMobile ? (
+              <ul style={{listStyle:"none",padding:0}}>
+                {phd.length===0 ? <li style={{color:C.muted,fontSize:13,padding:"16px 0"}}>Loading...</li> : phd.map((item,i) => (
+                  <li key={i} style={{padding:"12px 0",borderBottom:`1px solid ${C.pale}`}}>
+                    <div style={{color:C.teal,fontWeight:"bold",fontSize:12,fontFamily:"'Courier New', monospace",marginBottom:2}}>{item.Year}</div>
+                    <div style={{color:C.forest,fontSize:14,fontWeight:"bold",marginBottom:2}}>{item.Student}</div>
+                    <div style={{color:"#374151",fontSize:13,lineHeight:1.6}}>{item["Thesis Title"]}{item.Institution ? ", "+item.Institution : ""}</div>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <>
+                <ColRow>
+                  <CH w={60}>Year</CH>
+                  <CH w={180}>Student</CH>
+                  <CH>Thesis</CH>
+                </ColRow>
+                <ul style={{listStyle:"none",padding:0}}>
+                  {phd.length===0 ? <li style={{color:C.muted,fontSize:13,padding:"16px 0"}}>Loading...</li> : phd.map((item,i) => (
+                    <DataRow key={i}>
+                      <DC w={60} color={C.teal} mono>{item.Year}</DC>
+                      <DC w={180} color={C.forest}>{item.Student}</DC>
+                      <DC>{item["Thesis Title"]}{item.Institution ? ", "+item.Institution : ""}</DC>
+                    </DataRow>
+                  ))}
+                </ul>
+              </>
+            )}
 
             <SectionHead>Graduate Thesis Supervisions</SectionHead>
-            <ColRow>
-              <CH w={60}>Year</CH>
-              <CH w={isMobile?140:200}>Student</CH>
-              {!isMobile && <CH w={150}>Type</CH>}
-              <CH>Thesis</CH>
-            </ColRow>
-            <ul style={{listStyle:"none",padding:0}}>
-              {grad.length===0 ? <li style={{color:C.muted,fontSize:13,padding:"16px 0"}}>Loading...</li> : grad.map((item,i) => (
-                <DataRow key={i}>
-                  <DC w={60} color={C.teal} mono>{item.Year}</DC>
-                  <DC w={isMobile?140:200} color={C.forest}>{item.Student}</DC>
-                  {!isMobile && <DC w={150} color={C.muted} size={13}>{item.Type}</DC>}
-                  <DC>{item["Thesis Title"]}{isMobile && item.Type ? ` (${item.Type})` : ""}</DC>
-                </DataRow>
-              ))}
-            </ul>
+            {isMobile ? (
+              <ul style={{listStyle:"none",padding:0}}>
+                {grad.length===0 ? <li style={{color:C.muted,fontSize:13,padding:"16px 0"}}>Loading...</li> : grad.map((item,i) => (
+                  <li key={i} style={{padding:"12px 0",borderBottom:`1px solid ${C.pale}`}}>
+                    <div style={{color:C.teal,fontWeight:"bold",fontSize:12,fontFamily:"'Courier New', monospace",marginBottom:2}}>{item.Year} {item.Type ? `· ${item.Type}` : ""}</div>
+                    <div style={{color:C.forest,fontSize:14,fontWeight:"bold",marginBottom:2}}>{item.Student}</div>
+                    <div style={{color:"#374151",fontSize:13,lineHeight:1.6}}>{item["Thesis Title"]}</div>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <>
+                <ColRow>
+                  <CH w={60}>Year</CH>
+                  <CH w={200}>Student</CH>
+                  <CH w={150}>Type</CH>
+                  <CH>Thesis</CH>
+                </ColRow>
+                <ul style={{listStyle:"none",padding:0}}>
+                  {grad.length===0 ? <li style={{color:C.muted,fontSize:13,padding:"16px 0"}}>Loading...</li> : grad.map((item,i) => (
+                    <DataRow key={i}>
+                      <DC w={60} color={C.teal} mono>{item.Year}</DC>
+                      <DC w={200} color={C.forest}>{item.Student}</DC>
+                      <DC w={150} color={C.muted} size={13}>{item.Type}</DC>
+                      <DC>{item["Thesis Title"]}</DC>
+                    </DataRow>
+                  ))}
+                </ul>
+              </>
+            )}
           </>
         )}
 
@@ -461,41 +489,41 @@ export default function App() {
         {active === "Funded Projects" && (
           <>
             <PageTitle>Funded Projects</PageTitle>
-            <SectionHead>Research & Development Projects</SectionHead>
-            <ColRow>
-              <CH w={isMobile?120:170}>Role</CH>
-              <CH w={80}>Period</CH>
-              <CH w={undefined}>Project</CH>
-              {!isMobile && <CH w={220}>Funder</CH>}
-            </ColRow>
-            <ul style={{listStyle:"none",padding:0}}>
-              {funded.length===0 ? <li style={{color:C.muted,fontSize:13,padding:"16px 0"}}>Loading...</li> : funded.map((item,i) => (
-                <DataRow key={i}>
-                  <DC w={isMobile?120:170} color={C.teal} mono size={12}>{item.Role}</DC>
-                  <DC w={80} color={C.muted} size={13}>{item.Period}</DC>
-                  <span style={{flex:1,color:"#374151",fontSize:14,lineHeight:1.75,minWidth:0}}>{item.Project}{isMobile && item.Funder ? ` · ${item.Funder}` : ""}</span>
-                  {!isMobile && <span style={{width:220,flexShrink:0,color:C.muted,fontSize:13,lineHeight:1.75}}>{item.Funder}</span>}
-                </DataRow>
-              ))}
-            </ul>
-
-            <SectionHead>Technology Deployment Projects</SectionHead>
-            <ColRow>
-              <CH w={isMobile?120:170}>Role</CH>
-              <CH w={80}>Period</CH>
-              <CH w={undefined}>Project</CH>
-              {!isMobile && <CH w={220}>Funder</CH>}
-            </ColRow>
-            <ul style={{listStyle:"none",padding:0}}>
-              {fundedTech.length===0 ? <li style={{color:C.muted,fontSize:13,padding:"16px 0"}}>Loading...</li> : fundedTech.map((item,i) => (
-                <DataRow key={i}>
-                  <DC w={isMobile?120:170} color={C.teal} mono size={12}>{item.Role}</DC>
-                  <DC w={80} color={C.muted} size={13}>{item.Period}</DC>
-                  <span style={{flex:1,color:"#374151",fontSize:14,lineHeight:1.75,minWidth:0}}>{item.Project}{isMobile && item.Funder ? ` · ${item.Funder}` : ""}</span>
-                  {!isMobile && <span style={{width:220,flexShrink:0,color:C.muted,fontSize:13,lineHeight:1.75}}>{item.Funder}</span>}
-                </DataRow>
-              ))}
-            </ul>
+            {[{title:"Research & Development Projects", data:funded}, {title:"Technology Deployment Projects", data:fundedTech}].map(({title,data}) => (
+              <div key={title}>
+                <SectionHead>{title}</SectionHead>
+                {isMobile ? (
+                  <ul style={{listStyle:"none",padding:0}}>
+                    {data.length===0 ? <li style={{color:C.muted,fontSize:13,padding:"16px 0"}}>Loading...</li> : data.map((item,i) => (
+                      <li key={i} style={{padding:"12px 0",borderBottom:`1px solid ${C.pale}`}}>
+                        <div style={{color:C.teal,fontWeight:"bold",fontSize:12,fontFamily:"'Courier New', monospace",marginBottom:2}}>{item.Role}{item.Period && item.Period !== "–" ? ` · ${item.Period}` : ""}</div>
+                        <div style={{color:"#374151",fontSize:14,lineHeight:1.6,marginBottom:2}}>{item.Project}</div>
+                        {item.Funder && <div style={{color:C.muted,fontSize:13}}>{item.Funder}</div>}
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <>
+                    <ColRow>
+                      <CH w={170}>Role</CH>
+                      <CH w={80}>Period</CH>
+                      <CH w={undefined}>Project</CH>
+                      <CH w={220}>Funder</CH>
+                    </ColRow>
+                    <ul style={{listStyle:"none",padding:0}}>
+                      {data.length===0 ? <li style={{color:C.muted,fontSize:13,padding:"16px 0"}}>Loading...</li> : data.map((item,i) => (
+                        <DataRow key={i}>
+                          <DC w={170} color={C.teal} mono size={12}>{item.Role}</DC>
+                          <DC w={80} color={C.muted} size={13}>{item.Period}</DC>
+                          <span style={{flex:1,color:"#374151",fontSize:14,lineHeight:1.75,minWidth:0}}>{item.Project}</span>
+                          <span style={{width:220,flexShrink:0,color:C.muted,fontSize:13,lineHeight:1.75}}>{item.Funder}</span>
+                        </DataRow>
+                      ))}
+                    </ul>
+                  </>
+                )}
+              </div>
+            ))}
           </>
         )}
 
