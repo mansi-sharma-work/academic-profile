@@ -241,11 +241,11 @@ export default function App() {
       )}
 
       {/* MAIN LAYOUT */}
-      <div style={{display:"flex",minHeight:"100vh",alignItems:"stretch"}}>
+      <div style={{display:"flex",minHeight:"100vh"}}>
 
         {/* SIDEBAR (desktop) */}
         {!isMobile && (
-          <aside style={{width:210,flexShrink:0,borderRight:`1px solid ${C.border}`,background:C.white,position:"sticky",top:0,height:"100vh",overflowY:"auto",paddingTop:20}}>
+          <aside style={{width:200,flexShrink:0,borderRight:`1px solid ${C.border}`,background:C.white,position:"sticky",top:0,alignSelf:"flex-start",height:"100vh",overflowY:"auto",paddingTop:20}}>
             {NAV.map(n => (
               <button key={n} onClick={() => go(n)} style={{width:"100%",textAlign:"left",padding:"11px 20px",background:active===n?C.pale:"none",border:"none",borderLeft:active===n?`3px solid ${C.teal}`:"3px solid transparent",fontSize:13.5,fontFamily:"Georgia, serif",color:active===n?C.teal:C.slate,fontWeight:active===n?"bold":"normal",cursor:"pointer",lineHeight:1.5,transition:"all 0.15s"}}
                 onMouseEnter={e => { if(active!==n) { e.currentTarget.style.background="#f5f5f5"; } }}
@@ -256,11 +256,11 @@ export default function App() {
         )}
 
         {/* CONTENT */}
-        <div style={{flex:1,minWidth:0,padding:isMobile?"0 16px 60px":"0 40px 80px",paddingTop:0,maxWidth:1000}}>
+        <div style={{flex:1,minWidth:0,padding:isMobile?"0 16px 60px":"40px 60px 80px"}}>
 
           {/* About */}
           {active === "About" && (
-            <div style={{display:"grid",gridTemplateColumns:isMobile?"1fr":"260px 1fr",gap:isMobile?24:52,alignItems:"start",marginTop:28}}>
+            <div style={{display:"grid",gridTemplateColumns:isMobile?"1fr":w<900?"1fr":"180px 1fr",gap:isMobile?24:40,alignItems:"start"}}>
               <div style={{position:"relative",maxWidth:isMobile?"220px":"100%",margin:isMobile?"0 auto":"0"}}>
                 <img src="/cropped.JPG" alt="D. Manjunath"
                   onError={e => { e.target.style.display="none"; document.getElementById("prof-fallback").style.display="flex"; }}
@@ -273,7 +273,7 @@ export default function App() {
                 </div>
               </div>
               <div>
-                <div style={{fontSize:isMobile?24:32,fontWeight:"bold",color:"#0a3d2e",letterSpacing:"-0.01em",marginBottom:4}}>About</div>
+                <div style={{fontSize:isMobile?24:32,fontWeight:"bold",color:"#0a3d2e",letterSpacing:"-0.01em",marginBottom:4}}>D. Manjunath</div>
                 <div style={{fontSize:11,color:C.teal,letterSpacing:"0.1em",textTransform:"uppercase",fontFamily:"'Courier New', monospace",marginBottom:18}}>Professor · IIT Bombay</div>
                 <div style={{width:36,height:2.5,background:C.teal,borderRadius:2,marginBottom:20}} />
                 {["I am a Professor at the Department of Electrical Engineering, IIT Bombay, and the Head of the Centre for Machine Intelligence and Data Science (CMInDS).","My research spans computer and communication networks, queueing theory, stochastic systems, performance modeling, network economics, distributed optimization, and learning systems.","Current work focuses on stochastic models for large-scale systems, resource allocation, recommendation systems, and data-driven optimization in networked environments."].map((p,i) => (
