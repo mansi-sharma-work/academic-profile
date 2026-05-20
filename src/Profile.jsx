@@ -15,7 +15,7 @@ const C = {
   white:  "#ffffff",
 };
 
-const NAV = ["About", "Publications", "Research", "Professional Activities", "Awards & Distinctions", "Students", "Funded Projects", "Inventions & Software"];
+const NAV = ["About", "Publications", "Research", "Professional Activities", "Awards & Distinctions", "Students", "Funded Projects", "Inventions & Software", "Admin & Service"];
 
 function PageLoader({ done }) {
   const canvasRef = useRef(null);
@@ -102,13 +102,12 @@ function TimelineItem({ year, text }) {
   const isLong = (year||"").length > 6;
   return (
     <li style={{display:"flex",gap:16,padding:"10px 0",borderBottom:`1px solid ${C.pale}`}}>
-      <span style={{minWidth:90,color:C.teal,fontWeight:"bold",fontSize:isLong?10:13,fontFamily:"'Courier New', monospace",paddingTop:isLong?4:2,flexShrink:0}}>{year}</span>
+      <span style={{minWidth:90,color:C.teal,fontWeight:"bold",fontSize:isLong?11:13,fontFamily:"Georgia, serif",paddingTop:2,flexShrink:0}}>{year}</span>
       <span style={{color:"#374151",fontSize:15,lineHeight:1.75}}>{text}</span>
     </li>
   );
 }
 
-/* Table header label */
 function CH({ children, w }) {
   return (
     <span style={{width:w||"auto",flexShrink:0,flexGrow:w?0:1,fontSize:12,letterSpacing:"0.1em",textTransform:"uppercase",color:C.forest,fontFamily:"Georgia, serif",fontWeight:"bold"}}>
@@ -117,25 +116,19 @@ function CH({ children, w }) {
   );
 }
 
-/* Table header row */
 function ColRow({ children }) {
   return <div style={{display:"flex",gap:20,padding:"10px 0",borderBottom:`2px solid ${C.teal}`,marginBottom:6}}>{children}</div>;
 }
 
-/* Table data row */
 function DataRow({ children }) {
   return <li style={{display:"flex",gap:20,padding:"12px 0",borderBottom:`1px solid ${C.pale}`,lineHeight:1.75,listStyle:"none",alignItems:"flex-start"}}>{children}</li>;
 }
 
-/* Table data cell */
 function DC({ children, w, color, mono, size }) {
   return (
-    <span style={{
-      width:w||"auto", flexShrink:0, flexGrow:w?0:1,
-      color:color||"#374151", fontSize:size||14,
-      fontFamily:mono?"'Courier New', monospace":"Georgia, serif",
-      fontWeight:mono?"bold":"normal", lineHeight:1.75,
-    }}>{children}</span>
+    <span style={{width:w||"auto",flexShrink:0,flexGrow:w?0:1,color:color||"#374151",fontSize:size||14,fontFamily:"Georgia, serif",fontWeight:mono?"bold":"normal",lineHeight:1.75}}>
+      {children}
+    </span>
   );
 }
 
@@ -174,6 +167,8 @@ export default function App() {
   const [fundedTech,  setFundedTech]  = useState([]);
   const [inventions,  setInventions]  = useState([]);
   const [software,    setSoftware]    = useState([]);
+  const [adminPos,    setAdminPos]    = useState([]);
+  const [instService, setInstService] = useState([]);
 
   const w = useWindowWidth();
   const isMobile = w < 700;
@@ -194,9 +189,10 @@ export default function App() {
   useCSV("https://docs.google.com/spreadsheets/d/1FeLZpUaW4XnQ1MjRWFNBCXjmNGjCTKOufiaV6Fnmvgg/export?format=csv&gid=0", setFundedTech);
   useCSV("https://docs.google.com/spreadsheets/d/1jfXaQvpYZHmRU1_-bjM73I86dZ9dNZMf_GhJkvfxUTA/export?format=csv&gid=288940565", setSoftware);
   useCSV("https://docs.google.com/spreadsheets/d/1DtBRvEoBSfJ9OFF_qkpC9cM75EpI90aS_ZZts-45Lo8/export?format=csv&gid=0", setInventions);
+  useCSV("https://docs.google.com/spreadsheets/d/1t8nQW91QBXc2w-YZ_FdI10_njgT9EfhPdJXHuX0Ucb4/export?format=csv&gid=0", setInstService);
+  useCSV("https://docs.google.com/spreadsheets/d/1FlRAGFzJy6o5yjoLDafxTiJ7HHlMjCqtGl2gDeQF8-I/export?format=csv&gid=91758258", setAdminPos);
 
   const go = (page) => { setActive(page); setMenuOpen(false); };
-  const contentPad = { maxWidth:1040, margin:"0 auto", padding:isMobile?"0 16px 60px":"0 36px 80px", paddingTop:0 };
 
   return (
     <div style={{fontFamily:"Georgia, serif",background:C.bg,color:C.slate,minHeight:"100vh"}}>
@@ -207,57 +203,18 @@ export default function App() {
         DEPARTMENT OF ELECTRICAL ENGINEERING {" · "} IIT BOMBAY {" · "} CMInDS
       </div>
 
-      {/* ── NAV ── */}
-      <nav style={{position:"sticky",top:0,zIndex:100,background:C.white,borderBottom:`1px solid ${C.border}`,boxShadow:"0 1px 12px rgba(0,0,0,0.06)"}}>
-        {isMobile ? (
-          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"0 16px",minHeight:54}}>
-            <span style={{fontSize:15,fontWeight:"bold",color:C.forest,fontFamily:"Georgia, serif"}}>{active}</span>
-            <button onClick={() => setMenuOpen(!menuOpen)} style={{border:`1px solid ${C.border}`,background:C.white,padding:"7px 11px",borderRadius:6,cursor:"pointer",fontSize:16,lineHeight:1}}>☰</button>
-          </div>
-        ) : (
-          <div style={{display:"flex",justifyContent:"center",flexWrap:"wrap",padding:"0 8px"}}>
-            {NAV.map(n => (
-              <button key={n} onClick={() => go(n)} style={{
-                background:"none",border:"none",cursor:"pointer",
-                padding:"16px 12px",
-                fontSize:13,fontFamily:"Georgia, serif",
-                borderBottom:active===n?`2.5px solid ${C.teal}`:"2.5px solid transparent",
-                color:active===n?C.teal:C.muted,
-                fontWeight:active===n?"bold":"normal",
-                transition:"color 0.2s",whiteSpace:"nowrap",
-              }}>{n}</button>
-            ))}
-          </div>
-        )}
-      {isMobile && menuOpen && (
-        <div style={{background:C.white,borderBottom:`1px solid ${C.border}`}}>
-          {NAV.map(n => (
-            <button key={n} onClick={() => go(n)} style={{
-              width:"100%",textAlign:"left",padding:"14px 20px",
-              background:active===n?C.pale:C.white,
-              border:"none",borderBottom:`1px solid ${C.pale}`,
-              fontSize:14,fontFamily:"Georgia, serif",
-              color:active===n?C.teal:C.slate,
-              fontWeight:active===n?"bold":"normal",
-              cursor:"pointer",
-            }}>{n}</button>
-          ))}
-        </div>
-      )}
-      </nav>
-
       {/* HERO */}
-      <div style={{position:"relative",height:isMobile?200:290,overflow:"hidden",background:"linear-gradient(135deg, #04180f 0%, #0a3d2e 100%)"}}>
+      <div style={{position:"relative",height:isMobile?180:260,overflow:"hidden",background:"linear-gradient(135deg, #04180f 0%, #0a3d2e 100%)"}}>
         <div style={{position:"absolute",left:0,top:0,bottom:0,width:3,background:C.teal,opacity:0.6}} />
         <div style={{position:"relative",zIndex:2,height:"100%",display:"flex",flexDirection:"column",justifyContent:"center",alignItems:"center",textAlign:"center",padding:isMobile?"0 20px":"0 52px"}}>
           <div style={{fontFamily:"'Courier New', monospace",fontSize:isMobile?9:10,letterSpacing:"0.15em",color:C.mint,marginBottom:8,display:"flex",alignItems:"center",gap:8}}>
             <span style={{display:"inline-block",width:20,height:1,background:C.mint}} />
             PROFESSOR · DEPT. OF ELECTRICAL ENGINEERING
           </div>
-          <h1 style={{margin:0,fontSize:isMobile?30:50,fontWeight:"bold",color:C.white,letterSpacing:"-0.02em",lineHeight:1.05}}>D. Manjunath</h1>
+          <h1 style={{margin:0,fontSize:isMobile?28:46,fontWeight:"bold",color:C.white,letterSpacing:"-0.02em",lineHeight:1.05}}>D. Manjunath</h1>
           <p style={{margin:"8px 0 0",color:"#7bbba6",fontSize:isMobile?12:15}}>IIT Bombay {" · "} Head, Centre for Machine Intelligence {"&"} Data Science</p>
           {!isMobile && (
-            <div style={{display:"flex",gap:8,marginTop:20,flexWrap:"wrap",justifyContent:"center"}}>
+            <div style={{display:"flex",gap:8,marginTop:16,flexWrap:"wrap",justifyContent:"center"}}>
               {["Stochastic Systems","Network Theory","Queueing Models","ML & Optimization"].map(t => (
                 <span key={t} style={{fontSize:11,padding:"4px 12px",borderRadius:4,border:"1px solid rgba(29,184,126,0.3)",color:C.mint,fontFamily:"'Courier New', monospace",letterSpacing:"0.05em"}}>{t}</span>
               ))}
@@ -266,299 +223,291 @@ export default function App() {
         </div>
       </div>
 
-      <div style={contentPad}>
+      {/* MOBILE NAV */}
+      {isMobile && (
+        <div style={{position:"sticky",top:0,zIndex:100,background:C.white,borderBottom:`1px solid ${C.border}`,boxShadow:"0 1px 8px rgba(0,0,0,0.06)"}}>
+          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"0 16px",minHeight:50}}>
+            <span style={{fontSize:14,fontWeight:"bold",color:C.forest,fontFamily:"Georgia, serif"}}>{active}</span>
+            <button onClick={() => setMenuOpen(!menuOpen)} style={{border:`1px solid ${C.border}`,background:C.white,padding:"6px 10px",borderRadius:6,cursor:"pointer",fontSize:16,lineHeight:1}}>☰</button>
+          </div>
+          {menuOpen && (
+            <div style={{borderTop:`1px solid ${C.border}`}}>
+              {NAV.map(n => (
+                <button key={n} onClick={() => go(n)} style={{width:"100%",textAlign:"left",padding:"13px 20px",background:active===n?C.pale:C.white,border:"none",borderBottom:`1px solid ${C.pale}`,fontSize:14,fontFamily:"Georgia, serif",color:active===n?C.teal:C.slate,fontWeight:active===n?"bold":"normal",cursor:"pointer"}}>{n}</button>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
 
-        {/* ── About ── */}
-        {active === "About" && (
-          <div style={{display:"grid",gridTemplateColumns:isMobile?"1fr":"260px 1fr",gap:isMobile?24:52,alignItems:"start",marginTop:28}}>
-            <div style={{position:"relative",maxWidth:isMobile?"220px":"100%",margin:isMobile?"0 auto":"0"}}>
-              <img src="/cropped.JPG" alt="D. Manjunath"
-                onError={e => { e.target.style.display="none"; document.getElementById("prof-fallback").style.display="flex"; }}
-                style={{width:"100%",aspectRatio:"3/4",objectFit:"cover",objectPosition:"center 35%",borderRadius:14,display:"block",border:`1px solid ${C.border}`}}
-              />
-              <div id="prof-fallback" style={{display:"none",width:"100%",aspectRatio:"3/4",background:`linear-gradient(160deg, #0d3a26, ${C.teal})`,borderRadius:14,alignItems:"center",justifyContent:"center",border:`1px solid ${C.border}`,flexDirection:"column",gap:10}}>
-                <div style={{width:72,height:72,borderRadius:"50%",background:"rgba(255,255,255,0.15)",display:"flex",alignItems:"center",justifyContent:"center"}}>
-                  <span style={{fontSize:28,color:"rgba(255,255,255,0.7)"}}>DM</span>
+      {/* MAIN LAYOUT */}
+      <div style={{display:"flex",minHeight:"100vh",alignItems:"stretch"}}>
+
+        {/* SIDEBAR (desktop) */}
+        {!isMobile && (
+          <aside style={{width:210,flexShrink:0,borderRight:`1px solid ${C.border}`,background:C.white,position:"sticky",top:0,height:"100vh",overflowY:"auto",paddingTop:20}}>
+            {NAV.map(n => (
+              <button key={n} onClick={() => go(n)} style={{width:"100%",textAlign:"left",padding:"11px 20px",background:active===n?C.pale:"none",border:"none",borderLeft:active===n?`3px solid ${C.teal}`:"3px solid transparent",fontSize:13.5,fontFamily:"Georgia, serif",color:active===n?C.teal:C.slate,fontWeight:active===n?"bold":"normal",cursor:"pointer",lineHeight:1.5,transition:"all 0.15s"}}
+                onMouseEnter={e => { if(active!==n) { e.currentTarget.style.background="#f5f5f5"; } }}
+                onMouseLeave={e => { if(active!==n) { e.currentTarget.style.background="none"; } }}
+              >{n}</button>
+            ))}
+          </aside>
+        )}
+
+        {/* CONTENT */}
+        <div style={{flex:1,minWidth:0,padding:isMobile?"0 16px 60px":"0 40px 80px",paddingTop:0,maxWidth:1000}}>
+
+          {/* About */}
+          {active === "About" && (
+            <div style={{display:"grid",gridTemplateColumns:isMobile?"1fr":"260px 1fr",gap:isMobile?24:52,alignItems:"start",marginTop:28}}>
+              <div style={{position:"relative",maxWidth:isMobile?"220px":"100%",margin:isMobile?"0 auto":"0"}}>
+                <img src="/cropped.JPG" alt="D. Manjunath"
+                  onError={e => { e.target.style.display="none"; document.getElementById("prof-fallback").style.display="flex"; }}
+                  style={{width:"100%",aspectRatio:"3/4",objectFit:"cover",objectPosition:"center 35%",borderRadius:14,display:"block",border:`1px solid ${C.border}`}}
+                />
+                <div id="prof-fallback" style={{display:"none",width:"100%",aspectRatio:"3/4",background:`linear-gradient(160deg, #0d3a26, ${C.teal})`,borderRadius:14,alignItems:"center",justifyContent:"center",border:`1px solid ${C.border}`,flexDirection:"column",gap:10}}>
+                  <div style={{width:72,height:72,borderRadius:"50%",background:"rgba(255,255,255,0.15)",display:"flex",alignItems:"center",justifyContent:"center"}}>
+                    <span style={{fontSize:28,color:"rgba(255,255,255,0.7)"}}>DM</span>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <div style={{fontSize:isMobile?24:32,fontWeight:"bold",color:"#0a3d2e",letterSpacing:"-0.01em",marginBottom:4}}>About</div>
+                <div style={{fontSize:11,color:C.teal,letterSpacing:"0.1em",textTransform:"uppercase",fontFamily:"'Courier New', monospace",marginBottom:18}}>Professor · IIT Bombay</div>
+                <div style={{width:36,height:2.5,background:C.teal,borderRadius:2,marginBottom:20}} />
+                {["I am a Professor at the Department of Electrical Engineering, IIT Bombay, and the Head of the Centre for Machine Intelligence and Data Science (CMInDS).","My research spans computer and communication networks, queueing theory, stochastic systems, performance modeling, network economics, distributed optimization, and learning systems.","Current work focuses on stochastic models for large-scale systems, resource allocation, recommendation systems, and data-driven optimization in networked environments."].map((p,i) => (
+                  <p key={i} style={{lineHeight:1.9,color:"#374151",fontSize:isMobile?14:15.5,marginBottom:14}}>{p}</p>
+                ))}
+                <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,margin:"20px 0"}}>
+                  {[["Department","Electrical Engineering"],["Centre","CMInDS"],["Research","Networks & Stochastic Systems"],["Institution","IIT Bombay"]].map(([label,val]) => (
+                    <div key={label} style={{background:C.white,border:`1px solid ${C.border}`,borderLeft:`3px solid ${C.teal}`,borderRadius:8,padding:"10px 12px"}}>
+                      <div style={{fontSize:10,letterSpacing:"0.1em",textTransform:"uppercase",color:C.teal,fontFamily:"'Courier New', monospace",marginBottom:4}}>{label}</div>
+                      <div style={{fontSize:13,color:C.slate,lineHeight:1.5}}>{val}</div>
+                    </div>
+                  ))}
+                </div>
+                <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
+                  {[["Google Scholar ↗","https://scholar.google.com"],["IIT Bombay ↗","https://www.ee.iitb.ac.in"],["Email ↗","mailto:dmanjunath@iitb.ac.in"]].map(([label,href]) => (
+                    <a key={label} href={href} target="_blank" rel="noreferrer" style={{textDecoration:"none",border:`1.5px solid ${C.teal}`,color:C.teal,padding:"8px 14px",borderRadius:7,fontSize:13,transition:"all 0.2s",display:"inline-block"}}
+                      onMouseEnter={e => { e.target.style.background=C.teal; e.target.style.color="#fff"; }}
+                      onMouseLeave={e => { e.target.style.background="transparent"; e.target.style.color=C.teal; }}
+                    >{label}</a>
+                  ))}
                 </div>
               </div>
             </div>
-            <div>
-              <div style={{fontSize:isMobile?24:32,fontWeight:"bold",color:"#0a3d2e",letterSpacing:"-0.01em",marginBottom:4}}>About</div>
-              <div style={{fontSize:11,color:C.teal,letterSpacing:"0.1em",textTransform:"uppercase",fontFamily:"'Courier New', monospace",marginBottom:18}}>Professor · IIT Bombay</div>
-              <div style={{width:36,height:2.5,background:C.teal,borderRadius:2,marginBottom:20}} />
-              {["I am a Professor at the Department of Electrical Engineering, IIT Bombay, and the Head of the Centre for Machine Intelligence and Data Science (CMInDS).","My research spans computer and communication networks, queueing theory, stochastic systems, performance modeling, network economics, distributed optimization, and learning systems.","Current work focuses on stochastic models for large-scale systems, resource allocation, recommendation systems, and data-driven optimization in networked environments."].map((p,i) => (
-                <p key={i} style={{lineHeight:1.9,color:"#374151",fontSize:isMobile?14:15.5,marginBottom:14}}>{p}</p>
-              ))}
-              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,margin:"20px 0"}}>
-                {[["Department","Electrical Engineering"],["Centre","CMInDS"],["Research","Networks & Stochastic Systems"],["Institution","IIT Bombay"]].map(([label,val]) => (
-                  <div key={label} style={{background:C.white,border:`1px solid ${C.border}`,borderLeft:`3px solid ${C.teal}`,borderRadius:8,padding:"10px 12px"}}>
-                    <div style={{fontSize:10,letterSpacing:"0.1em",textTransform:"uppercase",color:C.teal,fontFamily:"'Courier New', monospace",marginBottom:4}}>{label}</div>
-                    <div style={{fontSize:13,color:C.slate,lineHeight:1.5}}>{val}</div>
+          )}
+
+          {/* Publications */}
+          {active === "Publications" && (
+            <>
+              <PageTitle>Publications</PageTitle>
+              <SectionHead>Pre-print Publications</SectionHead>
+              <ul style={{listStyle:"none",padding:0}}>{preprint.length===0?<li style={{color:C.muted,fontSize:13,padding:"16px 0"}}>Loading...</li>:preprint.map((item,i)=><PubItem key={i} item={item}/>)}</ul>
+              <SectionHead>Journal Articles</SectionHead>
+              <ul style={{listStyle:"none",padding:0}}>{journals.length===0?<li style={{color:C.muted,fontSize:13,padding:"16px 0"}}>Loading...</li>:journals.map((item,i)=><PubItem key={i} item={item}/>)}</ul>
+              <SectionHead>Conference Papers</SectionHead>
+              <ul style={{listStyle:"none",padding:0}}>{conferences.length===0?<li style={{color:C.muted,fontSize:13,padding:"16px 0"}}>Loading...</li>:conferences.map((item,i)=><PubItem key={i} item={item}/>)}</ul>
+              <SectionHead>Op-eds</SectionHead>
+              <ul style={{listStyle:"none",padding:0}}>{opeds.length===0?<li style={{color:C.muted,fontSize:13,padding:"16px 0"}}>Loading...</li>:opeds.map((item,i)=><TimelineItem key={i} year={item.year||item.period} text={item.text||item.title||item.award}/>)}</ul>
+              <SectionHead>Books</SectionHead>
+              <ul style={{listStyle:"none",padding:0}}>{books.length===0?<li style={{color:C.muted,fontSize:13,padding:"16px 0"}}>Loading...</li>:books.map((item,i)=><TimelineItem key={i} year={item.year||item.period} text={item.text||item.role||item.title}/>)}</ul>
+              <SectionHead>Refereed Conferences</SectionHead>
+              <ul style={{listStyle:"none",padding:0}}>{talks.length===0?<li style={{color:C.muted,fontSize:13,padding:"16px 0"}}>Loading...</li>:talks.map((item,i)=><TimelineItem key={i} year={item.year||item.period} text={item.text||item.title}/>)}</ul>
+            </>
+          )}
+
+          {/* Research */}
+          {active === "Research" && (
+            <>
+              <PageTitle>Research</PageTitle>
+              <SectionHead>Research Interests</SectionHead>
+              <p style={{lineHeight:1.9,color:"#374151",fontSize:15,marginBottom:24,marginTop:8}}>My work lies at the intersection of probability theory, network science, and machine learning — building rigorous analytical and data-driven models for real-world systems at scale.</p>
+              <div style={{display:"flex",flexWrap:"wrap",gap:8}}>
+                {["Computer Networks","Communication Networks","Queueing Theory","Stochastic Systems","Performance Modeling","Network Economics","Distributed Optimization","Recommendation Systems","Resource Allocation","Learning Systems","Data-Driven Optimization","Large-Scale Systems"].map(tag=>(
+                  <span key={tag} style={{padding:"6px 12px",borderRadius:7,fontSize:13,background:C.pale,color:C.forest,border:`1px solid ${C.border}`}}>{tag}</span>
+                ))}
+              </div>
+              <SectionHead>Current Focus Areas</SectionHead>
+              <div style={{display:"grid",gridTemplateColumns:isMobile?"1fr":"1fr 1fr",gap:14}}>
+                {[{title:"Stochastic Models",desc:"Rigorous probabilistic models for large-scale network systems and queues."},{title:"Resource Allocation",desc:"Optimal and near-optimal policies for resource distribution in dynamic environments."},{title:"Recommendation Systems",desc:"Theory and algorithms for personalized recommendations at scale."},{title:"Data-Driven Optimization",desc:"Combining statistical learning with classical optimization in networked settings."}].map(({title,desc})=>(
+                  <div key={title} style={{background:C.white,border:`1px solid ${C.border}`,borderTop:`3px solid ${C.teal}`,borderRadius:10,padding:"16px 18px"}}>
+                    <div style={{fontWeight:"bold",color:C.forest,fontSize:15,marginBottom:8}}>{title}</div>
+                    <div style={{color:"#4b5563",fontSize:13.5,lineHeight:1.75}}>{desc}</div>
                   </div>
                 ))}
               </div>
-              <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
-                {[["Google Scholar ↗","https://scholar.google.com"],["IIT Bombay ↗","https://www.ee.iitb.ac.in"],["Email ↗","mailto:dmanjunath@iitb.ac.in"]].map(([label,href]) => (
-                  <a key={label} href={href} target="_blank" rel="noreferrer" style={{textDecoration:"none",border:`1.5px solid ${C.teal}`,color:C.teal,padding:"8px 14px",borderRadius:7,fontSize:13,transition:"all 0.2s",display:"inline-block"}}
-                    onMouseEnter={e => { e.target.style.background=C.teal; e.target.style.color="#fff"; }}
-                    onMouseLeave={e => { e.target.style.background="transparent"; e.target.style.color=C.teal; }}
-                  >{label}</a>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
+            </>
+          )}
 
-        {/* ── Publications ── */}
-        {active === "Publications" && (
-          <>
-            <PageTitle>Publications</PageTitle>
-            <SectionHead>Pre-print Publications</SectionHead>
-            <ul style={{listStyle:"none",padding:0}}>
-              {preprint.length===0 ? <li style={{color:C.muted,fontSize:13,padding:"16px 0"}}>Loading...</li> : preprint.map((item,i) => <PubItem key={i} item={item} />)}
-            </ul>
-            <SectionHead>Journal Articles</SectionHead>
-            <ul style={{listStyle:"none",padding:0}}>
-              {journals.length===0 ? <li style={{color:C.muted,fontSize:13,padding:"16px 0"}}>Loading...</li> : journals.map((item,i) => <PubItem key={i} item={item} />)}
-            </ul>
-            <SectionHead>Conference Papers</SectionHead>
-            <ul style={{listStyle:"none",padding:0}}>
-              {conferences.length===0 ? <li style={{color:C.muted,fontSize:13,padding:"16px 0"}}>Loading...</li> : conferences.map((item,i) => <PubItem key={i} item={item} />)}
-            </ul>
-            <SectionHead>Op-eds</SectionHead>
-            <ul style={{listStyle:"none",padding:0}}>
-              {opeds.length===0 ? <li style={{color:C.muted,fontSize:13,padding:"16px 0"}}>Loading...</li> : opeds.map((item,i) => <TimelineItem key={i} year={item.year||item.period} text={item.text||item.title||item.award} />)}
-            </ul>
-            <SectionHead>Books</SectionHead>
-            <ul style={{listStyle:"none",padding:0}}>
-              {books.length===0 ? <li style={{color:C.muted,fontSize:13,padding:"16px 0"}}>Loading...</li> : books.map((item,i) => <TimelineItem key={i} year={item.year||item.period} text={item.text||item.role||item.title} />)}
-            </ul>
-            <SectionHead>Refereed Conferences</SectionHead>
-            <ul style={{listStyle:"none",padding:0}}>
-              {talks.length===0 ? <li style={{color:C.muted,fontSize:13,padding:"16px 0"}}>Loading...</li> : talks.map((item,i) => <TimelineItem key={i} year={item.year||item.period} text={item.text||item.title} />)}
-            </ul>
-          </>
-        )}
+          {/* Professional Activities */}
+          {active === "Professional Activities" && (
+            <>
+              <PageTitle>Professional Activities</PageTitle>
+              {profActs.length===0 ? <p style={{color:C.muted,fontSize:13,padding:"16px 0"}}>Loading...</p> : (() => {
+                const knownCategories = ["Organiser","Editorial","Board Membership","Conference Leadership","Refereeing - IEEE Journals","Refereeing - ACM Journals","Refereeing - CS and Mathematics","Refereeing - Operations Research","Refereeing - Other Journals","Refereeing - IEEE Conferences","Refereeing - ACM Conferences","Refereeing - Other Conferences","Refereeing","TPC Member","IEEE Membership","Conference Participation"];
+                const parsed = profActs.map(item => {
+                  const cols = Object.values(item);
+                  const colA=(cols[0]||"").trim(), colB=(cols[1]||"").trim(), colC=(cols[2]||"").trim();
+                  let category="Other", activity=colA;
+                  for (const cat of knownCategories) {
+                    if (colA.startsWith(cat)) { category=cat.startsWith("Refereeing -")?"Refereeing":cat; activity=colA.slice(cat.length).trim(); break; }
+                  }
+                  return { category, activity:[activity,colB,colC].filter(Boolean).join(", ") };
+                });
+                const groups=[], seen={};
+                parsed.forEach(({category,activity}) => {
+                  if (!seen[category]) { seen[category]=true; groups.push({category,items:[]}); }
+                  groups.find(g=>g.category===category).items.push(activity);
+                });
+                return groups.map(({category,items}) => (
+                  <div key={category}>
+                    <SectionHead>{category}</SectionHead>
+                    <ul style={{listStyle:"none",padding:0}}>
+                      {items.map((activity,i) => (
+                        <li key={i} style={{display:"flex",gap:12,padding:"10px 0",borderBottom:`1px solid ${C.pale}`,lineHeight:1.75}}>
+                          <span style={{color:C.teal,fontSize:16,lineHeight:1.6,flexShrink:0}}>•</span>
+                          <span style={{color:"#374151",fontSize:14}}>{activity}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ));
+              })()}
+            </>
+          )}
 
-        {/* ── Research ── */}
-        {active === "Research" && (
-          <>
-            <PageTitle>Research</PageTitle>
-            <SectionHead>Research Interests</SectionHead>
-            <p style={{lineHeight:1.9,color:"#374151",fontSize:15,marginBottom:24,marginTop:8}}>My work lies at the intersection of probability theory, network science, and machine learning — building rigorous analytical and data-driven models for real-world systems at scale.</p>
-            <div style={{display:"flex",flexWrap:"wrap",gap:8}}>
-              {["Computer Networks","Communication Networks","Queueing Theory","Stochastic Systems","Performance Modeling","Network Economics","Distributed Optimization","Recommendation Systems","Resource Allocation","Learning Systems","Data-Driven Optimization","Large-Scale Systems"].map(tag => (
-                <span key={tag} style={{padding:"6px 12px",borderRadius:7,fontSize:13,background:C.pale,color:C.forest,border:`1px solid ${C.border}`}}>{tag}</span>
-              ))}
-            </div>
-            <SectionHead>Current Focus Areas</SectionHead>
-            <div style={{display:"grid",gridTemplateColumns:isMobile?"1fr":"1fr 1fr",gap:14}}>
-              {[{title:"Stochastic Models",desc:"Rigorous probabilistic models for large-scale network systems and queues."},{title:"Resource Allocation",desc:"Optimal and near-optimal policies for resource distribution in dynamic environments."},{title:"Recommendation Systems",desc:"Theory and algorithms for personalized recommendations at scale."},{title:"Data-Driven Optimization",desc:"Combining statistical learning with classical optimization in networked settings."}].map(({title,desc}) => (
-                <div key={title} style={{background:C.white,border:`1px solid ${C.border}`,borderTop:`3px solid ${C.teal}`,borderRadius:10,padding:"16px 18px"}}>
-                  <div style={{fontWeight:"bold",color:C.forest,fontSize:15,marginBottom:8}}>{title}</div>
-                  <div style={{color:"#4b5563",fontSize:13.5,lineHeight:1.75}}>{desc}</div>
-                </div>
-              ))}
-            </div>
-          </>
-        )}
+          {/* Awards */}
+          {active === "Awards & Distinctions" && (
+            <>
+              <PageTitle>Awards & Distinctions</PageTitle>
+              <ColRow><CH w={90}>Year</CH><CH>Award</CH></ColRow>
+              <ul style={{listStyle:"none",padding:0}}>{awards.length===0?<li style={{color:C.muted,fontSize:13,padding:"16px 0"}}>Loading...</li>:awards.map((item,i)=><TimelineItem key={i} year={item.Year} text={item.Award}/>)}</ul>
+            </>
+          )}
 
-        {/* ── Professional Activities ── */}
-        {active === "Professional Activities" && (
-          <>
-            <PageTitle>Professional Activities</PageTitle>
-            {profActs.length===0
-              ? <p style={{color:C.muted,fontSize:13,padding:"16px 0"}}>Loading...</p>
-              : (() => {
-                  const knownCategories = ["Organiser","Editorial","Board Membership","Conference Leadership","Refereeing - IEEE Journals","Refereeing - ACM Journals","Refereeing - CS and Mathematics","Refereeing - Operations Research","Refereeing - Other Journals","Refereeing - IEEE Conferences","Refereeing - ACM Conferences","Refereeing - Other Conferences","Refereeing","TPC Member","IEEE Membership","Conference Participation"];
-                  const parsed = profActs.map(item => {
-                    const cols = Object.values(item);
-                    const colA=(cols[0]||"").trim(), colB=(cols[1]||"").trim(), colC=(cols[2]||"").trim();
-                    let category="Other", activity=colA;
-                    for (const cat of knownCategories) {
-                      if (colA.startsWith(cat)) { category=cat.startsWith("Refereeing -")?"Refereeing":cat; activity=colA.slice(cat.length).trim(); break; }
-                    }
-                    return { category, activity:[activity,colB,colC].filter(Boolean).join(", ") };
-                  });
-                  const groups=[], seen={};
-                  parsed.forEach(({category,activity}) => {
-                    if (!seen[category]) { seen[category]=true; groups.push({category,items:[]}); }
-                    groups.find(g=>g.category===category).items.push(activity);
-                  });
-                  return groups.map(({category,items}) => (
-                    <div key={category}>
-                      <SectionHead>{category}</SectionHead>
-                      <ul style={{listStyle:"none",padding:0}}>
-                        {items.map((activity,i) => (
-                          <li key={i} style={{display:"flex",gap:12,padding:"10px 0",borderBottom:`1px solid ${C.pale}`,lineHeight:1.75}}>
-                            <span style={{color:C.teal,fontSize:16,lineHeight:1.6,flexShrink:0}}>•</span>
-                            <span style={{color:"#374151",fontSize:14}}>{activity}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  ));
-                })()
-            }
-          </>
-        )}
-
-        {/* ── Awards ── */}
-        {active === "Awards & Distinctions" && (
-          <>
-            <PageTitle>Awards & Distinctions</PageTitle>
-            <ColRow>
-              <CH w={90}>Year</CH>
-              <CH>Award</CH>
-            </ColRow>
-            <ul style={{listStyle:"none",padding:0}}>
-              {awards.length===0 ? <li style={{color:C.muted,fontSize:13,padding:"16px 0"}}>Loading...</li> : awards.map((item,i) => <TimelineItem key={i} year={item.Year} text={item.Award} />)}
-            </ul>
-          </>
-        )}
-
-        {/* ── Students ── */}
-        {active === "Students" && (
-          <>
-            <PageTitle>Students</PageTitle>
-            <SectionHead>PhD Supervisions: Completed</SectionHead>
-            {isMobile ? (
-              <ul style={{listStyle:"none",padding:0}}>
-                {phd.length===0 ? <li style={{color:C.muted,fontSize:13,padding:"16px 0"}}>Loading...</li> : phd.map((item,i) => (
+          {/* Students */}
+          {active === "Students" && (
+            <>
+              <PageTitle>Students</PageTitle>
+              <SectionHead>PhD Supervisions: Completed</SectionHead>
+              {isMobile ? (
+                <ul style={{listStyle:"none",padding:0}}>{phd.length===0?<li style={{color:C.muted,fontSize:13,padding:"16px 0"}}>Loading...</li>:phd.map((item,i)=>(
                   <li key={i} style={{padding:"12px 0",borderBottom:`1px solid ${C.pale}`}}>
-                    <div style={{color:C.teal,fontWeight:"bold",fontSize:12,fontFamily:"'Courier New', monospace",marginBottom:2}}>{item.Year}</div>
+                    <div style={{color:C.teal,fontWeight:"bold",fontSize:12,fontFamily:"Georgia, serif",marginBottom:2}}>{item.Year}</div>
                     <div style={{color:C.forest,fontSize:14,fontWeight:"bold",marginBottom:2}}>{item.Student}</div>
-                    <div style={{color:"#374151",fontSize:13,lineHeight:1.6}}>{item["Thesis Title"]}{item.Institution ? ", "+item.Institution : ""}</div>
+                    <div style={{color:"#374151",fontSize:13,lineHeight:1.6}}>{item["Thesis Title"]}{item.Institution?", "+item.Institution:""}</div>
                   </li>
-                ))}
-              </ul>
-            ) : (
-              <>
-                <ColRow>
-                  <CH w={60}>Year</CH>
-                  <CH w={180}>Student</CH>
-                  <CH>Thesis</CH>
-                </ColRow>
-                <ul style={{listStyle:"none",padding:0}}>
-                  {phd.length===0 ? <li style={{color:C.muted,fontSize:13,padding:"16px 0"}}>Loading...</li> : phd.map((item,i) => (
-                    <DataRow key={i}>
-                      <DC w={60} color={C.teal} mono>{item.Year}</DC>
-                      <DC w={180} color={C.forest}>{item.Student}</DC>
-                      <DC>{item["Thesis Title"]}{item.Institution ? ", "+item.Institution : ""}</DC>
-                    </DataRow>
-                  ))}
-                </ul>
-              </>
-            )}
-
-            <SectionHead>Graduate Thesis Supervisions</SectionHead>
-            {isMobile ? (
-              <ul style={{listStyle:"none",padding:0}}>
-                {grad.length===0 ? <li style={{color:C.muted,fontSize:13,padding:"16px 0"}}>Loading...</li> : grad.map((item,i) => (
+                ))}</ul>
+              ) : (
+                <>
+                  <ColRow><CH w={60}>Year</CH><CH w={180}>Student</CH><CH>Thesis</CH></ColRow>
+                  <ul style={{listStyle:"none",padding:0}}>{phd.length===0?<li style={{color:C.muted,fontSize:13,padding:"16px 0"}}>Loading...</li>:phd.map((item,i)=>(
+                    <DataRow key={i}><DC w={60} color={C.teal} mono>{item.Year}</DC><DC w={180} color={C.forest}>{item.Student}</DC><DC>{item["Thesis Title"]}{item.Institution?", "+item.Institution:""}</DC></DataRow>
+                  ))}</ul>
+                </>
+              )}
+              <SectionHead>Graduate Thesis Supervisions</SectionHead>
+              {isMobile ? (
+                <ul style={{listStyle:"none",padding:0}}>{grad.length===0?<li style={{color:C.muted,fontSize:13,padding:"16px 0"}}>Loading...</li>:grad.map((item,i)=>(
                   <li key={i} style={{padding:"12px 0",borderBottom:`1px solid ${C.pale}`}}>
-                    <div style={{color:C.teal,fontWeight:"bold",fontSize:12,fontFamily:"'Courier New', monospace",marginBottom:2}}>{item.Year} {item.Type ? `· ${item.Type}` : ""}</div>
+                    <div style={{color:C.teal,fontWeight:"bold",fontSize:12,fontFamily:"Georgia, serif",marginBottom:2}}>{item.Year}{item.Type?` · ${item.Type}`:""}</div>
                     <div style={{color:C.forest,fontSize:14,fontWeight:"bold",marginBottom:2}}>{item.Student}</div>
                     <div style={{color:"#374151",fontSize:13,lineHeight:1.6}}>{item["Thesis Title"]}</div>
                   </li>
-                ))}
-              </ul>
-            ) : (
-              <>
-                <ColRow>
-                  <CH w={60}>Year</CH>
-                  <CH w={200}>Student</CH>
-                  <CH w={150}>Type</CH>
-                  <CH>Thesis</CH>
-                </ColRow>
-                <ul style={{listStyle:"none",padding:0}}>
-                  {grad.length===0 ? <li style={{color:C.muted,fontSize:13,padding:"16px 0"}}>Loading...</li> : grad.map((item,i) => (
-                    <DataRow key={i}>
-                      <DC w={60} color={C.teal} mono>{item.Year}</DC>
-                      <DC w={200} color={C.forest}>{item.Student}</DC>
-                      <DC w={150} color={C.muted} size={13}>{item.Type}</DC>
-                      <DC>{item["Thesis Title"]}</DC>
-                    </DataRow>
-                  ))}
-                </ul>
-              </>
-            )}
-          </>
-        )}
+                ))}</ul>
+              ) : (
+                <>
+                  <ColRow><CH w={60}>Year</CH><CH w={200}>Student</CH><CH w={150}>Type</CH><CH>Thesis</CH></ColRow>
+                  <ul style={{listStyle:"none",padding:0}}>{grad.length===0?<li style={{color:C.muted,fontSize:13,padding:"16px 0"}}>Loading...</li>:grad.map((item,i)=>(
+                    <DataRow key={i}><DC w={60} color={C.teal} mono>{item.Year}</DC><DC w={200} color={C.forest}>{item.Student}</DC><DC w={150} color={C.muted} size={13}>{item.Type}</DC><DC>{item["Thesis Title"]}</DC></DataRow>
+                  ))}</ul>
+                </>
+              )}
+            </>
+          )}
 
-        {/* ── Funded Projects ── */}
-        {active === "Funded Projects" && (
-          <>
-            <PageTitle>Funded Projects</PageTitle>
-            {[{title:"Research & Development Projects", data:funded}, {title:"Technology Deployment Projects", data:fundedTech}].map(({title,data}) => (
-              <div key={title}>
-                <SectionHead>{title}</SectionHead>
-                {isMobile ? (
-                  <ul style={{listStyle:"none",padding:0}}>
-                    {data.length===0 ? <li style={{color:C.muted,fontSize:13,padding:"16px 0"}}>Loading...</li> : data.map((item,i) => (
+          {/* Funded Projects */}
+          {active === "Funded Projects" && (
+            <>
+              <PageTitle>Funded Projects</PageTitle>
+              {[{title:"Research & Development Projects",data:funded},{title:"Technology Deployment Projects",data:fundedTech}].map(({title,data})=>(
+                <div key={title}>
+                  <SectionHead>{title}</SectionHead>
+                  {isMobile ? (
+                    <ul style={{listStyle:"none",padding:0}}>{data.length===0?<li style={{color:C.muted,fontSize:13,padding:"16px 0"}}>Loading...</li>:data.map((item,i)=>(
                       <li key={i} style={{padding:"12px 0",borderBottom:`1px solid ${C.pale}`}}>
-                        <div style={{color:C.teal,fontWeight:"bold",fontSize:12,fontFamily:"'Courier New', monospace",marginBottom:2}}>{item.Role}{item.Period && item.Period !== "–" ? ` · ${item.Period}` : ""}</div>
+                        <div style={{color:C.teal,fontWeight:"bold",fontSize:12,fontFamily:"Georgia, serif",marginBottom:2}}>{item.Role}{item.Period&&item.Period!=="–"?` · ${item.Period}`:""}</div>
                         <div style={{color:"#374151",fontSize:14,lineHeight:1.6,marginBottom:2}}>{item.Project}</div>
-                        {item.Funder && <div style={{color:C.muted,fontSize:13}}>{item.Funder}</div>}
+                        {item.Funder&&<div style={{color:C.muted,fontSize:13}}>{item.Funder}</div>}
                       </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <>
-                    <ColRow>
-                      <CH w={170}>Role</CH>
-                      <CH w={80}>Period</CH>
-                      <CH w={undefined}>Project</CH>
-                      <CH w={220}>Funder</CH>
-                    </ColRow>
-                    <ul style={{listStyle:"none",padding:0}}>
-                      {data.length===0 ? <li style={{color:C.muted,fontSize:13,padding:"16px 0"}}>Loading...</li> : data.map((item,i) => (
+                    ))}</ul>
+                  ) : (
+                    <>
+                      <ColRow><CH w={170}>Role</CH><CH w={80}>Period</CH><CH>Project</CH><CH w={220}>Funder</CH></ColRow>
+                      <ul style={{listStyle:"none",padding:0}}>{data.length===0?<li style={{color:C.muted,fontSize:13,padding:"16px 0"}}>Loading...</li>:data.map((item,i)=>(
                         <DataRow key={i}>
                           <DC w={170} color={C.teal} mono size={12}>{item.Role}</DC>
                           <DC w={80} color={C.muted} size={13}>{item.Period}</DC>
                           <span style={{flex:1,color:"#374151",fontSize:14,lineHeight:1.75,minWidth:0}}>{item.Project}</span>
                           <span style={{width:220,flexShrink:0,color:C.muted,fontSize:13,lineHeight:1.75}}>{item.Funder}</span>
                         </DataRow>
-                      ))}
-                    </ul>
-                  </>
-                )}
-              </div>
-            ))}
-          </>
-        )}
+                      ))}</ul>
+                    </>
+                  )}
+                </div>
+              ))}
+            </>
+          )}
 
-        {/* ── Inventions & Software ── */}
-        {active === "Inventions & Software" && (
-          <>
-            <PageTitle>Inventions & Software</PageTitle>
-            <SectionHead>Inventions</SectionHead>
-            <ul style={{listStyle:"none",padding:0}}>
-              {inventions.length===0 ? <li style={{color:C.muted,fontSize:13,padding:"16px 0"}}>Loading...</li> : inventions.map((item,i) => (
+          {/* Inventions & Software */}
+          {active === "Inventions & Software" && (
+            <>
+              <PageTitle>Inventions & Software</PageTitle>
+              <SectionHead>Inventions</SectionHead>
+              <ul style={{listStyle:"none",padding:0}}>{inventions.length===0?<li style={{color:C.muted,fontSize:13,padding:"16px 0"}}>Loading...</li>:inventions.map((item,i)=>(
                 <li key={i} style={{display:"flex",gap:12,padding:"14px 0",borderBottom:`1px solid ${C.pale}`,lineHeight:1.75}}>
                   <span style={{color:C.teal,fontSize:16,lineHeight:1.6,flexShrink:0}}>•</span>
-                  <div>
-                    <span style={{color:C.forest,fontSize:14,fontWeight:"bold"}}>{item.Authors} </span>
-                    <span style={{color:C.slate,fontSize:14}}>{item.Title}</span>
-                    {item.Details && <div style={{color:C.muted,fontSize:13,marginTop:3}}>{item.Details}</div>}
-                  </div>
+                  <div><span style={{color:C.forest,fontSize:14,fontWeight:"bold"}}>{item.Authors} </span><span style={{color:C.slate,fontSize:14}}>{item.Title}</span>{item.Details&&<div style={{color:C.muted,fontSize:13,marginTop:3}}>{item.Details}</div>}</div>
                 </li>
-              ))}
-            </ul>
-            <SectionHead>Software Developed</SectionHead>
-            <ul style={{listStyle:"none",padding:0}}>
-              {software.length===0 ? <li style={{color:C.muted,fontSize:13,padding:"16px 0"}}>Loading...</li> : software.map((item,i) => (
+              ))}</ul>
+              <SectionHead>Software Developed</SectionHead>
+              <ul style={{listStyle:"none",padding:0}}>{software.length===0?<li style={{color:C.muted,fontSize:13,padding:"16px 0"}}>Loading...</li>:software.map((item,i)=>(
                 <li key={i} style={{display:"flex",gap:12,padding:"14px 0",borderBottom:`1px solid ${C.pale}`,lineHeight:1.75}}>
                   <span style={{color:C.teal,fontSize:16,lineHeight:1.6,flexShrink:0}}>•</span>
-                  <div>
-                    <span style={{color:C.forest,fontSize:14,fontWeight:"bold"}}>{item.Name}</span>
-                    {item.Description && <div style={{color:"#374151",fontSize:14,marginTop:3}}>{item.Description}</div>}
-                  </div>
+                  <div><span style={{color:C.forest,fontSize:14,fontWeight:"bold"}}>{item.Name}</span>{item.Description&&<div style={{color:"#374151",fontSize:14,marginTop:3}}>{item.Description}</div>}</div>
                 </li>
-              ))}
-            </ul>
-          </>
-        )}
+              ))}</ul>
+            </>
+          )}
 
+          {/* Admin & Service */}
+          {active === "Admin & Service" && (
+            <>
+              <PageTitle>Admin & Service</PageTitle>
+              <SectionHead>Administrative & Service Positions</SectionHead>
+              <ul style={{listStyle:"none",padding:0}}>{adminPos.length===0?<li style={{color:C.muted,fontSize:13,padding:"16px 0"}}>Loading...</li>:adminPos.map((item,i)=><TimelineItem key={i} year={item.Period} text={item.Position}/>)}</ul>
+              <SectionHead>Selected Institute Service</SectionHead>
+              {isMobile ? (
+                <ul style={{listStyle:"none",padding:0}}>{instService.length===0?<li style={{color:C.muted,fontSize:13,padding:"16px 0"}}>Loading...</li>:instService.map((item,i)=>(
+                  <li key={i} style={{padding:"12px 0",borderBottom:`1px solid ${C.pale}`}}>
+                    <div style={{color:C.teal,fontWeight:"bold",fontSize:12,fontFamily:"Georgia, serif",marginBottom:2}}>{item.Period}{item.Institution?` · ${item.Institution}`:""}</div>
+                    <div style={{color:"#374151",fontSize:13,lineHeight:1.6}}>{item.Activity}</div>
+                  </li>
+                ))}</ul>
+              ) : (
+                <>
+                  <ColRow><CH w={90}>Period</CH><CH w={110}>Institution</CH><CH>Activity</CH></ColRow>
+                  <ul style={{listStyle:"none",padding:0}}>{instService.length===0?<li style={{color:C.muted,fontSize:13,padding:"16px 0"}}>Loading...</li>:instService.map((item,i)=>(
+                    <DataRow key={i}><DC w={90} color={C.teal} mono size={12}>{item.Period}</DC><DC w={110} color={C.muted} size={13}>{item.Institution}</DC><DC>{item.Activity}</DC></DataRow>
+                  ))}</ul>
+                </>
+              )}
+            </>
+          )}
+
+        </div>
       </div>
 
       <div style={{background:C.white,borderTop:`1px solid ${C.border}`,padding:"20px 16px",textAlign:"center",fontSize:11,color:C.muted,fontFamily:"'Courier New', monospace",letterSpacing:"0.06em"}}>
