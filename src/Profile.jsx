@@ -283,7 +283,7 @@ export default function App() {
               </div>
             </div>
             <div>
-              <div style={{fontSize:isMobile?24:32,fontWeight:"bold",color:"#0a3d2e",letterSpacing:"-0.01em",marginBottom:4}}>D. Manjunath</div>
+              <div style={{fontSize:isMobile?24:32,fontWeight:"bold",color:"#0a3d2e",letterSpacing:"-0.01em",marginBottom:4}}>About</div>
               <div style={{fontSize:11,color:C.teal,letterSpacing:"0.1em",textTransform:"uppercase",fontFamily:"'Courier New', monospace",marginBottom:18}}>Professor · IIT Bombay</div>
               <div style={{width:36,height:2.5,background:C.teal,borderRadius:2,marginBottom:20}} />
               {["I am a Professor at the Department of Electrical Engineering, IIT Bombay, and the Head of the Centre for Machine Intelligence and Data Science (CMInDS).","My research spans computer and communication networks, queueing theory, stochastic systems, performance modeling, network economics, distributed optimization, and learning systems.","Current work focuses on stochastic models for large-scale systems, resource allocation, recommendation systems, and data-driven optimization in networked environments."].map((p,i) => (
