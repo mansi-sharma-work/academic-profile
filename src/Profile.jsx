@@ -15,8 +15,6 @@ const C = {
   white:  "#ffffff",
 };
 
-// ── Typography tokens — single source of truth ────────────────────────────────
-// Every list item, bullet, and body text derives from here.
 const T = {
   body:   14,       // primary text size
   small:  13,       // authors, venue, year, labels
@@ -29,11 +27,11 @@ const T = {
 const NAV = [
   "About","Research","Professional Activities","Publications","Op-eds",
   "Awards & Distinctions","Students","Funded Projects",
-  "Data Inventions & Software","Admin & Service",
+  "Data Inventions & Software","Admin & Service","Talks"
 ];
 
 const SECTION_CSVS = {
-  "Publications":               ["journals","conferences","opeds","books","preprint","talks"],
+  "Publications":               ["journals","conferences","preprint","talks"],
   "Op-eds":                     ["opeds","books"],
   "Professional Activities":    ["profActs"],
   "Awards & Distinctions":      ["awards"],
@@ -383,7 +381,7 @@ export default function App() {
           </nav>
         )}
 
-        <div style={{ flex: 1, minWidth: 0, padding: contentPadding, maxWidth: isDesktop ? "900px" : "100%" }}>
+        <div style={{flex:1,minWidth:0,padding:contentPadding,maxWidth:isDesktop?"900px":"100%",margin:"0 auto"}}>
 
           {/* ═══ ABOUT ═══ */}
           {active === "About" && (
@@ -493,39 +491,7 @@ export default function App() {
               ))}
 
               {}
-              <SectionHead>Op-eds</SectionHead>
-              <ul style={{ listStyle: "none", padding: 0 }}>
-                {d.opeds.length === 0
-                  ? <Loading />
-                  : d.opeds.map((item, i) => (
-                      <EntryItem key={i}
-                        authors={item.authors}
-                        title={item.title}
-                        venue={item.outlet}
-                        year={item.year}
-                        link={item.link}
-
-                      />
-                    ))
-                }
-              </ul>
-
-              <SectionHead>Books</SectionHead>
-              <ul style={{ listStyle: "none", padding: 0 }}>
-                {d.books.length === 0
-                  ? <Loading />
-                  : d.books.map((item, i) => (
-                      <EntryItem key={i}
-                        authors={item.authors}
-                        title={item.title || item.text}
-                        venue={item.venue}
-                        year={item.year || item.period}
-                        doi={item.doi}
-
-                      />
-                    ))
-                }
-              </ul>
+              
 
               {/* Refereed Conferences / Talks → TimelineItem (year + citation string) */}
               <SectionHead>Refereed Conferences</SectionHead>
@@ -843,6 +809,33 @@ export default function App() {
               )}
             </>
           )}
+          {/* ═══ TALKS ═══ */}
+{active === "Talks" && (
+  <>
+    <PageTitle>Talks</PageTitle>
+    <p style={{textAlign:"center",color:C.muted,fontSize:14,lineHeight:1.8,maxWidth:600,margin:"16px auto 0"}}>
+      Selected public lectures, outreach talks, and invited presentations beyond the academic conference circuit.
+    </p>
+    <div style={{marginTop:40,display:"flex",justifyContent:"center",alignItems:"flex-start"}}>
+      <div style={{background:C.white,border:`1px solid ${C.border}`,borderRadius:14,overflow:"hidden",width:"100%",maxWidth:440,boxShadow:"0 2px 16px rgba(0,0,0,0.08)"}}>
+        <img
+          src="/talks.png"
+          alt="Curated Choice: Technology of Recommendations"
+          style={{width:"100%",display:"block"}}
+        />
+        <div style={{padding:"18px 22px"}}>
+          <div style={{fontSize:16,fontWeight:"bold",color:C.forest,marginBottom:6}}>Curated Choice: Technology of Recommendations</div>
+          <div style={{fontSize:13,color:C.muted,marginBottom:4}}>Lecture Over Drinks · Pint of View</div>
+          <div style={{display:"flex",gap:16,flexWrap:"wrap",marginTop:10}}>
+            <span style={{fontSize:13,color:C.slate}}>📅 Sunday, 26 April 2026</span>
+            <span style={{fontSize:13,color:C.slate}}>🕔 5 PM – 7 PM</span>
+            <span style={{fontSize:13,color:C.slate}}>📍 Sthamba Brewery, Andheri</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </>
+)}
 
         </div>
       </div>
