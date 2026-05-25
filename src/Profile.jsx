@@ -265,7 +265,7 @@ function TopNav({ active, menuOpen, setMenuOpen, go }) {
         </button>
       </div>
       {menuOpen && (
-        <ul role="list" style={{ margin: 0, padding: 0, listStyle: "none", borderTop: `1px solid ${C.border}`, maxHeight: "70vh", overflowY: "auto" }}>
+        <ul style={{margin:0,padding:0,listStyle:"none",borderTop:`1px solid ${C.border}`,maxHeight:"70vh",overflowY:"auto"}}>
           {NAV.map(n => (
             <li key={n}>
               <button
