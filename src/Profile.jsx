@@ -792,20 +792,20 @@ export default function App() {
                 </ul>
               ) : (
                 <div>
-                  <ColRow><CH w={90}>Period</CH><CH w={110}>Institution</CH><CH>Activity</CH></ColRow>
-                  <ul style={{ listStyle: "none", padding: 0 }}>
-                    {d.instService.length === 0
-                      ? <Loading />
-                      : d.instService.map((item, i) => (
-                          <DataRow key={i}>
-                            <DC w={90}  color={C.teal} mono size={12}>{item.Period || item.period}</DC>
-                            <DC w={110} color={C.muted} size={T.small}>{item.Institution || item.institution}</DC>
-                            <DC>{item.Activity || item.activity || ""}</DC>
-                          </DataRow>
-                        ))
-                    }
-                  </ul>
-                </div>
+  <ColRow><CH w={90}>Period</CH><CH w={110}>Institution</CH><CH>Activity</CH></ColRow>
+  <ul style={{ listStyle: "none", padding: 0 }}>
+    {d.instService.length === 0
+      ? <Loading />
+      : d.instService.map((item, i) => (
+          <DataRow key={i}>
+            <DC w={90}  color={C.teal} mono size={12}>{item.Period || item.period}</DC>
+            <DC w={110} color={C.muted} size={T.small}>{item.Institution || item.institution}</DC>
+            <span style={{flex:1,minWidth:0,color:"#374151",fontSize:T.body,lineHeight:T.lh,wordBreak:"break-word"}}>{item.Activity || item.activity || ""}</span>
+          </DataRow>
+        ))
+    }
+  </ul>
+</div>
               )}
             </>
           )}
