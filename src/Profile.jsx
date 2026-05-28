@@ -25,14 +25,14 @@ const T = {
 };
 
 const NAV = [
-  "About","Research","Professional Activities","Publications","Op-eds",
+  "About","Research","Professional Activities","Publications","Op-eds and Essays",
   "Awards & Distinctions","Students","Funded Projects",
   "Data Inventions & Software","Admin & Service","Talks"
 ];
 
 const SECTION_CSVS = {
   "Publications":               ["journals","conferences","preprint","talks"],
-  "Op-eds":                     ["opeds","books"],
+  "Op-eds and Essays":                     ["opeds","books"],
   "Professional Activities":    ["profActs"],
   "Awards & Distinctions":      ["awards"],
   "Students":                   ["phd","grad"],
@@ -510,12 +510,12 @@ export default function App() {
           )}
 
           {/* ═══ OP-EDS (standalone) ═══ */}
-          {active === "Op-eds" && (
+          {active === "Op-eds and Essays" && (
             <>
-              <PageTitle>Op-eds</PageTitle>
+              <PageTitle>Op-eds and Essays</PageTitle>
 
               {}
-              <SectionHead>Op-eds & Articles</SectionHead>
+              <SectionHead>Op-eds & Essays</SectionHead>
               <ul style={{ listStyle: "none", padding: 0 }}>
                 {d.opeds.length === 0
                   ? <Loading />
