@@ -25,9 +25,20 @@ const T = {
 };
 
 const NAV = [
-  "About","Research","Professional Activities","Publications","Op-eds and Essays",
-  "Awards & Distinctions","Students","Funded Projects",
+  "Brief Bio","Research","Professional Activities","Publications","Op-eds and Essays",
+  "Middles","Awards & Distinctions","Students","Funded Projects",
   "Data Inventions & Software","Admin & Service","Talks"
+];
+
+const SOFTWARE_EXTRA = [
+  { title: "Location Analysis and optimization of bank branches and customer service points", year: "2026", link: "https://www.minds.iitb.ac.in/sbi-banking-friction" },
+];
+
+const MIDDLES = [
+  { title: "It Always Was So", file: "/middles/It Always Was So.pdf" },
+  { title: "Eichmann", file: "/middles/Eichmann.pdf" },
+  { title: "Lohia in the Air", file: "/middles/Lohia in the Air.pdf" },
+  { title: "Meeting Jatti", file: "/middles/Meeting-Jatti.pdf" },
 ];
 
 const SECTION_CSVS = {
@@ -229,7 +240,7 @@ function DataRow({ children }) {
 }
 function DC({ children, w, color, mono, size }) {
   return (
-    <span style={{ width: w || "auto", flexShrink: 0, flexGrow: w ? 0 : 1, color: color || "#374151", fontSize: size || T.body, fontFamily: "Arial, sans-serif", fontWeight: mono ? "bold" : "normal", lineHeight: T.lh }}>
+    <span style={{ width: w || "auto", flexShrink: w ? 0 : 1, flexGrow: w ? 0 : 1, minWidth: 0, overflowWrap: "break-word", color: color || "#374151", fontSize: size || T.body, fontFamily: "Arial, sans-serif", fontWeight: mono ? "bold" : "normal", lineHeight: T.lh }}>
       {children}
     </span>
   );
@@ -286,7 +297,7 @@ function TopNav({ active, menuOpen, setMenuOpen, go }) {
    MAIN APP
 ═══════════════════════════════════════════════════ */
 export default function App() {
-  const [active,     setActive]     = useState("About");
+  const [active,     setActive]     = useState("Brief Bio");
   const [menuOpen,   setMenuOpen]   = useState(false);
   const [loaderDone, setLoaderDone] = useState(false);
   const [photoFailed,setPhotoFailed]= useState(false);
@@ -353,7 +364,7 @@ export default function App() {
           <p style={{ margin: "8px 0 0", color: "#7bbba6", fontSize: isMobile ? 12 : 14 }}>IIT Bombay</p>
           {!isMobile && (
             <div style={{ display: "flex", gap: 6, marginTop: 14, flexWrap: "wrap", justifyContent: "center", maxWidth: 760 }}>
-              {["Communications Networking","Stochastic and AI systems","Performance and Queueing Models","Recommendation systems and Bandit algorithms","Economics of Internet and AI"].map(t => (
+              {["Communications Networking","Performance and Queueing Models","Recommendation systems and Bandit algorithms","Economics of Internet and AI"].map(t => (
                 <span key={t} style={{ fontSize: isTablet ? 10 : 11, padding: "3px 10px", borderRadius: 4, border: "1px solid rgba(29,184,126,0.3)", color: C.mint, fontFamily: "Arial, sans-serif", letterSpacing: "0.04em" }}>{t}</span>
               ))}
             </div>
@@ -383,13 +394,13 @@ export default function App() {
 
         <div style={{flex:1,minWidth:0,padding:contentPadding,maxWidth:isDesktop?"900px":"100%",margin:"0 auto"}}>
 
-          {/* ═══ ABOUT ═══ */}
-          {active === "About" && (
+          {/* ═══ BRIEF BIO ═══ */}
+          {active === "Brief Bio" && (
             <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : isTablet ? "160px 1fr" : "290px 1fr", gap: isMobile ? 20 : 36, alignItems: "start", paddingTop: isMobile ? 20 : 0 }}>
               <div style={{ maxWidth: isMobile ? "200px" : "100%", margin: isMobile ? "0 auto" : "0" }}>
                 {!photoFailed ? (
                   <img
-                    src="/cropped.JPG"
+                    src="/profile-final.JPG"
                     alt="D. Manjunath"
                     onError={() => setPhotoFailed(true)}
                     style={{ width: "100%", aspectRatio: "3/4", objectFit: "cover", objectPosition: "center 35%", borderRadius: 12, display: "block", border: `1px solid ${C.border}` }}
@@ -407,9 +418,11 @@ export default function App() {
                 <div style={{ fontSize: T.tiny, color: C.teal, letterSpacing: "0.1em", textTransform: "uppercase", fontFamily: "Arial, sans-serif", marginBottom: 16 }}>Professor · IIT Bombay</div>
                 <div style={{ width: 32, height: 2.5, background: C.teal, borderRadius: 2, marginBottom: 18 }} />
                 {[
-                  "I am a Professor at the Department of Electrical Engineering, IIT Bombay, and the Head of the Centre for Machine Intelligence and Data Science (CMInDS).",
-                  "My research spans computer and communication networks, queueing theory, stochastic systems, performance modeling, network economics, distributed optimization, and learning systems.",
-                  "Current work focuses on stochastic models for large-scale systems, resource allocation, recommendation systems, and data-driven optimization in networked environments.",
+                  "D. Manjunath received his BE from Mysore University, MS from IIT Madras and PhD from Rensselaer in 1986, 1989, and 1993 respectively. He has been with the Electrical Engineering Dept. of IIT Bombay since July 1998. He has previously worked in CR&D of GE in Schenectady NY (1990), CIS Dept. of Univ. of Delaware (1992-93), CS Dept. Univ. of Toronto (1993-94) and EE Dept. of IIT Kanpur (1994-98). At IIT Bombay, he was head of Computer Centre during 2011-15 and Head, Centre for Machine Intelligence and Data Science (CMInDS) during 2023-3026.",
+                  "His research interests are in the general areas of computer & communication networks and performance analysis. Some of his recent research has concentrated on economics of the Internet and AI, multi-armed bandit problems, pricing and queue control.",
+                  "He has published about 150 papers in refereed venues. He is a coauthor of two textbooks, Communication Networking: An Analytical Approach (May 2004) and Wireless Networking (Apr 2008), both of which are published by Morgan-Kaufman Publishers.",
+                  "He received the best paper award at SIGMETRICS 2010 and the honourable mention at COMSNETS. He has previously been an associate editor of IEEE Transactions on Networking, Queueing Systems: Theory and Applications, and Sadhana: The Proceedings of the Indian Academy of Sciences and now of Current Science. He was TPC chair for COMSNETS 2011 and NCC 2015 and general chair for MobiHoc 2013, COMSNETS 2015 and ACM SIGMETRICS / IFIP Performance 2022.",
+                  "He has consulted widely on technology projects to various government, public sector, and private sector organizations. He is also on the governing and advisory boards of several organizations.",
                 ].map((p, i) => (
                   <p key={i} style={{ lineHeight: T.lh, color: "#374151", fontSize: isMobile ? T.small : T.body, marginBottom: 12 }}>{p}</p>
                 ))}
@@ -432,15 +445,16 @@ export default function App() {
               <PageTitle>Research</PageTitle>
               <SectionHead>Research Interests</SectionHead>
               <p style={{ lineHeight: T.lh, color: "#374151", fontSize: isMobile ? T.small : T.body, marginTop: 8, marginBottom: 20 }}>
-                General area of networking, queueing and other stochastic systems, and performance modeling.
-              </p>
+My research interests are the in the general areas  computer and communication networks, queueing systems & performance modeling. 
+More recently I have been working economics of the Internet and AI and on recommendation systems.              </p>
 
               <SectionHead>Current Work</SectionHead>
               <ul style={{ listStyle: "none", padding: 0 }}>
                 {[
-                  "Stochastic models for performance analysis of systems.",
                   "Network economics, microeconomic models, and game theory.",
                   "Learning systems and self tuning mechanisms for optimal resource allocation in computer systems.",
+
+                  "Stochastic models for performance analysis of systems.",
                   "Distributed computation and distributed optimisation for network resource provisioning.",
                 ].map((item, i) => <BulletItem key={i} text={item} />)}
               </ul>
@@ -448,7 +462,6 @@ export default function App() {
               <SectionHead>Recent Past Topics</SectionHead>
               <ul style={{ listStyle: "none", padding: 0 }}>
                 {[
-                  "Microeconomic models for the security and connectivity in the Internet.",
                   "Learning models in non stationary environments.",
                   "Random geometric graph models for wireless networks and stochastic coverage processes.",
                   "Traffic Measurement and Performance Monitoring.",
@@ -551,6 +564,25 @@ export default function App() {
             </>
           )}
 
+          {/* ═══ MIDDLES ═══ */}
+          {active === "Middles" && (
+            <>
+              <PageTitle>Middles</PageTitle>
+              <ul style={{ listStyle: "none", padding: 0 }}>
+                {MIDDLES.length === 0
+                  ? <li style={{ color: C.muted, fontSize: 15, padding: "16px 0" }}>No entries yet.</li>
+                  : MIDDLES.map(({ title, file }, i) => (
+                      <li key={i} style={{ padding: "20px 0", borderBottom: `1px solid ${C.pale}`, lineHeight: T.lh, display: "flex", gap: 14, alignItems: "center" }}>
+                        <span style={{ color: C.teal, fontSize: 18, lineHeight: 1.6, flexShrink: 0 }}>•</span>
+                        <span style={{ fontSize: 17, color: C.slate, flex: 1, fontWeight: "bold" }}>{title}</span>
+                        <a href={file} download style={{ marginLeft: 8, fontSize: 13, textDecoration: "none", color: C.teal, border: `1px solid ${C.teal}`, padding: "4px 11px", borderRadius: 4 }}>PDF ↓</a>
+                      </li>
+                    ))
+                }
+              </ul>
+            </>
+          )}
+
           {/* ═══ PROFESSIONAL ACTIVITIES ═══ */}
           {active === "Professional Activities" && (
             <>
@@ -562,10 +594,10 @@ export default function App() {
                     const parsed = d.profActs.map(item => {
                       const cols = Object.values(item);
                       const colA = (cols[0] || "").trim(), colB = (cols[1] || "").trim(), colC = (cols[2] || "").trim();
-                      let category = "Other", activity = colA;
+                      let category = "Conference", activity = colA;
                       for (const cat of knownCategories) {
                         if (colA.startsWith(cat)) {
-                          category = cat.startsWith("Refereeing -") ? "Refereeing" : cat === "Editorial" ? "Editorship" : cat;
+                          category = cat === "Editorial" ? "Editorship" : "Conference";
                           activity = colA.slice(cat.length).trim();
                           break;
                         }
@@ -748,13 +780,19 @@ export default function App() {
               {}
               <SectionHead>Software Developed</SectionHead>
               <ul style={{ listStyle: "none", padding: 0 }}>
+                {SOFTWARE_EXTRA.map((item, i) => (
+                  <EntryItem key={`extra-${i}`}
+                    title={item.title}
+                    year={item.year}
+                    link={item.link}
+                  />
+                ))}
                 {d.software.length === 0
                   ? <Loading />
                   : d.software.map((item, i) => (
                       <EntryItem key={i}
                         title={item.Name || item.name}
                         note={item.Description || item.description}
-
                       />
                     ))
                 }
