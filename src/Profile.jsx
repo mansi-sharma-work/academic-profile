@@ -673,7 +673,7 @@ More recently I have been working economics of the Internet and AI and on recomm
                 </div>
               )}
 
-              <SectionHead>Graduate Thesis Supervisions</SectionHead>
+              <SectionHead>Selected Masters Theses</SectionHead>
               {isNarrow ? (
                 <ul style={{ listStyle: "none", padding: 0 }}>
                   {d.grad.length === 0
