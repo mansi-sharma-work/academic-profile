@@ -400,7 +400,7 @@ export default function App() {
               <div style={{ maxWidth: isMobile ? "200px" : "100%", margin: isMobile ? "0 auto" : "0" }}>
                 {!photoFailed ? (
                   <img
-                    src="/profile-final.JPG"
+                    src="/profile-final.jpg"
                     alt="D. Manjunath"
                     onError={() => setPhotoFailed(true)}
                     style={{ width: "100%", aspectRatio: "3/4", objectFit: "cover", objectPosition: "center 35%", borderRadius: 12, display: "block", border: `1px solid ${C.border}` }}
