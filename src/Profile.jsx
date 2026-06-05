@@ -27,7 +27,7 @@ const T = {
 const NAV = [
   "Brief Bio","Research","Professional Activities","Publications","Op-eds and Essays",
   "Middles","Awards & Distinctions","Students","Funded Projects",
-  "Data Inventions & Software","Admin & Service","Talks"
+  "Data Inventions & Software","Admin & Service","Some Popular Talks"
 ];
 
 const SOFTWARE_EXTRA = [
@@ -185,8 +185,12 @@ function EntryItem({ authors, title, venue, year, doi, link, note }) {
         </span>
         {venue && <span style={{ color: C.muted, fontSize: T.small }}>{" · "}{venue}</span>}
         {year  && <span style={{ color: C.muted, fontSize: T.small }}>{", "}{year}</span>}
-        {doi  && <a href={doi}  target="_blank" rel="noreferrer" style={badgeStyle}>DOI ↗</a>}
-        {link && <a href={link} target="_blank" rel="noreferrer" style={badgeStyle}>Link ↗</a>}
+        {(doi || link) && (
+          <div style={{ marginTop: 4, display: "flex", gap: 6, flexWrap: "wrap" }}>
+            {doi  && <a href={doi}  target="_blank" rel="noreferrer" style={{ ...badgeStyle, marginLeft: 0 }}>DOI ↗</a>}
+            {link && <a href={link} target="_blank" rel="noreferrer" style={{ ...badgeStyle, marginLeft: 0 }}>Link ↗</a>}
+          </div>
+        )}
         {note && (
           <div style={{ marginTop: 4, fontSize: T.small, color: C.muted, fontStyle: "italic" }}>{note}</div>
         )}
@@ -213,10 +217,9 @@ function BulletItem({ text }) {
 // Used only where the year label is the primary organising axis.
 // ─────────────────────────────────────────────────────────────────────────────
 function TimelineItem({ year, text }) {
-  const isLong = (year || "").length > 6;
   return (
-    <li style={{ display: "flex", gap: 14, padding: T.pad, borderBottom: `1px solid ${C.pale}` }}>
-      <span style={{ minWidth: 86, color: C.teal, fontWeight: "bold", fontSize: isLong ? T.tiny : T.small, fontFamily: "Arial, sans-serif", paddingTop: 2, flexShrink: 0 }}>
+    <li style={{ display: "flex", gap: 14, padding: T.pad, borderBottom: `1px solid ${C.pale}`, alignItems: "baseline" }}>
+      <span style={{ minWidth: 86, color: C.teal, fontWeight: "bold", fontSize: T.small, fontFamily: "Arial, sans-serif", flexShrink: 0 }}>
         {year}
       </span>
       <span style={{ color: "#374151", fontSize: T.body, lineHeight: T.lh }}>{text}</span>
@@ -451,7 +454,7 @@ More recently I have been working economics of the Internet and AI and on recomm
               <SectionHead>Current Work</SectionHead>
               <ul style={{ listStyle: "none", padding: 0 }}>
                 {[
-                  "Network economics, microeconomic models, and game theory.",
+                  "Network economics, microeconomic models, and economics of AI",
                   "Learning systems and self tuning mechanisms for optimal resource allocation in computer systems.",
 
                   "Stochastic models for performance analysis of systems.",
@@ -480,7 +483,7 @@ More recently I have been working economics of the Internet and AI and on recomm
               {}
               {[
                 ["Pre-print Publications", d.preprint],
-                ["Journal Articles and Premiere Conferences", d.journals],
+                ["Journal Articles and Premier Conferences", d.journals],
                 ["Conference Papers", d.conferences],
               ].map(([heading, data]) => (
                 <div key={heading}>
@@ -495,6 +498,7 @@ More recently I have been working economics of the Internet and AI and on recomm
                             venue={item.venue}
                             year={item.year}
                             doi={item.doi}
+                            link={item.link}
                             note={item.note}
                           />
                         ))
@@ -507,7 +511,7 @@ More recently I have been working economics of the Internet and AI and on recomm
               
 
               {/* Refereed Conferences / Talks → TimelineItem (year + citation string) */}
-              <SectionHead>Refereed Conferences</SectionHead>
+              <SectionHead>Selected Seminars and Talks</SectionHead>
               <ul style={{ listStyle: "none", padding: 0 }}>
                 {d.talks.length === 0
                   ? <Loading />
@@ -608,6 +612,11 @@ More recently I have been working economics of the Internet and AI and on recomm
                     parsed.forEach(({ category, activity }) => {
                       if (!seen[category]) { seen[category] = true; groups.push({ category, items: [] }); }
                       groups.find(g => g.category === category).items.push(activity);
+                    });
+                    groups.sort((a, b) => {
+                      if (a.category === "Editorship") return -1;
+                      if (b.category === "Editorship") return 1;
+                      return 0;
                     });
                     return groups.map(({ category, items }) => (
                       <div key={category}>
@@ -848,9 +857,9 @@ More recently I have been working economics of the Internet and AI and on recomm
             </>
           )}
           {/* ═══ TALKS ═══ */}
-{active === "Talks" && (
+{active === "Some Popular Talks" && (
   <>
-    <PageTitle>Talks</PageTitle>
+    <PageTitle>Some Popular Talks</PageTitle>
     <p style={{textAlign:"center",color:C.muted,fontSize:14,lineHeight:1.8,maxWidth:600,margin:"16px auto 0"}}>
       Selected public lectures, outreach talks, and invited presentations beyond the academic conference circuit.
     </p>
